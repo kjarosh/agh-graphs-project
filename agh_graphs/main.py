@@ -1,11 +1,10 @@
-import uuid
-
+from matplotlib import pyplot
 from networkx import Graph
 
 from evaluate import Evaluator
 from productions.p1 import P1
 from utils import gen_name
-from visualize import visualize_graph_layer
+from visualize import visualize_graph_layer, visualize_graph_3d
 
 productions = [
     P1()
@@ -20,4 +19,8 @@ if __name__ == '__main__':
     for i in range(layer):
         evaluator.evaluate_next_layer()
 
+    visualize_graph_3d(graph)
+    pyplot.show()
+
     visualize_graph_layer(graph, layer)
+    pyplot.show()

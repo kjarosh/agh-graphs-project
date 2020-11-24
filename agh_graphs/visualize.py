@@ -2,7 +2,7 @@
 Module responsible for visualization of the graph.
 """
 import networkx
-from matplotlib import pyplot
+import numpy as np
 from networkx import Graph
 
 
@@ -33,4 +33,56 @@ def visualize_graph_layer(graph: Graph, layer: int):
         labels=networkx.get_node_attributes(filtered_graph, 'label'),
         node_color=colors,
         with_labels=True)
-    return pyplot.show()
+
+
+def __project_node(nodes_data, focus_on_layer=2):
+    """
+    Perform a 3D perspective projection on the node.
+    """
+    a = np.array([
+        nodes_data['position'][0],
+        nodes_data['position'][1],
+        nodes_data['layer']
+    ]).reshape(3, 1)
+
+    # camera rotation
+    rx, ry, rz = (-1.6, 0, -0.9)
+    # camera position
+    c = np.array([-4, -3, focus_on_layer - 4]).reshape(3, 1)
+
+    mx = np.array([
+        [1, 0, 0],
+        [0, np.cos(rx), np.sin(rx)],
+        [0, -np.sin(rx), np.cos(rx)],
+    ])
+    my = np.array([
+        [np.cos(ry), 0, -np.sin(ry)],
+        [0, 1, 0],
+        [np.sin(ry), 0, np.cos(ry)],
+    ])
+    mz = np.array([
+        [np.cos(rz), np.sin(rz), 0],
+        [-np.sin(rz), np.cos(rz), 0],
+        [0, 0, 1],
+    ])
+
+    d = mx.dot(my).dot(mz).dot(a - c).reshape(3)
+
+    return (
+        d[0] / d[2],
+        d[1] / d[2],
+    )
+
+
+def __project_nodes(nodes):
+    return {n: __project_node(d) for n, d in nodes}
+
+
+def visualize_graph_3d(graph: Graph):
+    colors = [__get_color(d) for n, d in graph.nodes(data=True)]
+    networkx.draw(
+        graph,
+        __project_nodes(graph.nodes(data=True)),
+        labels=networkx.get_node_attributes(graph, 'label'),
+        node_color=colors,
+        with_labels=True)
