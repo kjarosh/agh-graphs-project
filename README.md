@@ -24,3 +24,6 @@ In order to add a new production, create a file `agh_graphs/productions/<name>.p
 with a class which extends `agh_graphs.production.Production`.
 Consult the docs from the module `agh_graphs.production` for details.
 When the class is ready, it may be added to the production list in `main.py`.
+
+Each production should have tests written and added to
+`tests/productions/test_<production name>.py`.

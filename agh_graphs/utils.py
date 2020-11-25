@@ -11,10 +11,18 @@ def gen_name():
 
 
 def centroid(a, b, c):
+    """
+    Returns the centroid of the triangle defined by the given points:
+    a, b, and c.
+    """
     return tuple(sum(s) / len(s) for s in zip(a, b, c))
 
 
 def add_interior(graph: Graph, a_name, b_name, c_name):
+    """
+    Adds a node which represents the interior of the triangle defined by
+    nodes with names: a_name, b_name and c_name.
+    """
     node_positions = graph.nodes(data='position')
     node_layers = graph.nodes(data='layer')
     a_pos = node_positions[a_name]
