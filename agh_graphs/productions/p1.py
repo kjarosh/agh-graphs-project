@@ -45,4 +45,4 @@ class P1(Production):
         graph.add_edge(i1, initial_node_id)
         graph.add_edge(i2, initial_node_id)
 
-        return [i1, i2]
+        return [i1]
