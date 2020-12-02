@@ -1,7 +1,6 @@
 from matplotlib import pyplot
 from networkx import Graph
 
-from evaluate import Evaluator
 from productions.p1 import P1
 from utils import gen_name
 from visualize import visualize_graph_layer, visualize_graph_3d
@@ -13,11 +12,12 @@ productions = [
 if __name__ == '__main__':
     layer = 1
     graph = Graph()
-    graph.add_node(gen_name(), layer=0, position=(0.5, 0.5), label='E')
+    initial_node_name = gen_name()
+    graph.add_node(initial_node_name, layer=0, position=(0.5, 0.5), label='E')
 
-    evaluator = Evaluator(productions, graph)
-    for i in range(layer):
-        evaluator.evaluate_next_layer()
+    prod_input = [initial_node_name]
+    for production in productions:
+        prod_input = production.apply(graph, prod_input)
 
     visualize_graph_3d(graph)
     pyplot.show()

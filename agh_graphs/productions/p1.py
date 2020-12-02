@@ -1,30 +1,26 @@
+from typing import List
+
 from networkx import Graph
 
 from agh_graphs.production import Production
-from production import ProductionType
 from utils import gen_name, add_interior
 
 
 class P1(Production):
-    def get_type(self) -> ProductionType:
-        return ProductionType.layer_creation
 
-    def apply(self, layer: int, graph: Graph) -> None:
-        if layer != 0:
-            # this production makes sense only on layer 0
-            return
-        if len(graph.nodes()) != 1:
-            return
+    def apply(self, graph: Graph, prod_input: List[str]) -> List[str]:
+        if len(prod_input) != 1:
+            raise AttributeError("Bad input")
 
-        initial_node, data = list(graph.nodes(data=True))[0]
-
-        if data['label'] != 'E' or data['layer'] != 0:
-            return
+        initial_node_id = prod_input[0]
+        initial_node_data = graph.nodes[initial_node_id]
+        if initial_node_data['label'] != 'E' or initial_node_data['layer'] != 0:
+            raise AttributeError("Bad input")
 
         # change label
-        data['label'] = 'e'
+        initial_node_data['label'] = 'e'
 
-        midx, midy = data['position']
+        midx, midy = initial_node_data['position']
         x = 2 * midx
         y = 2 * midy
 
@@ -46,5 +42,7 @@ class P1(Production):
         i1 = add_interior(graph, vx_tl, vx_tr, vx_bl)
         i2 = add_interior(graph, vx_tr, vx_br, vx_bl)
 
-        graph.add_edge(i1, initial_node)
-        graph.add_edge(i2, initial_node)
+        graph.add_edge(i1, initial_node_id)
+        graph.add_edge(i2, initial_node_id)
+
+        return [i1, i2]
