@@ -9,13 +9,14 @@ from utils import gen_name, add_interior
 class P1(Production):
 
     def apply(self, graph: Graph, prod_input: List[str]) -> List[str]:
-        if len(prod_input) != 1:
-            raise AttributeError("Bad input")
-
-        initial_node_id = prod_input[0]
+        [initial_node_id] = prod_input
         initial_node_data = graph.nodes[initial_node_id]
-        if initial_node_data['label'] != 'E' or initial_node_data['layer'] != 0:
-            raise AttributeError("Bad input")
+
+        if initial_node_data['layer'] != 0:
+            raise ValueError('bad layer')
+
+        if initial_node_data['label'] != 'E':
+            raise ValueError('bad label')
 
         # change label
         initial_node_data['label'] = 'e'

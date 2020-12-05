@@ -82,7 +82,7 @@ class P1Test(unittest.TestCase):
         initial_node = gen_name()
         graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaisesRegex(ValueError, 'bad layer'):
             P1().apply(graph, [initial_node])
 
         self.assertEqual(len(graph.nodes()), 1)
@@ -92,7 +92,17 @@ class P1Test(unittest.TestCase):
         initial_node = gen_name()
         graph.add_node(initial_node, layer=0, position=(0.5, 0.5), label='e')
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaisesRegex(ValueError, 'bad label'):
             P1().apply(graph, [initial_node])
+
+        self.assertEqual(len(graph.nodes()), 1)
+
+    def test_wrong_args(self):
+        graph = Graph()
+        initial_node = gen_name()
+        graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
+
+        with self.assertRaisesRegex(ValueError, 'not enough values to unpack'):
+            P1().apply(graph, [])
 
         self.assertEqual(len(graph.nodes()), 1)

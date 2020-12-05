@@ -39,7 +39,7 @@ class P2(Production):
         graph.add_edge(vx_e3, vx_e1)
 
         b = add_break(graph, [(vx_e1, vx_e2), (vx_e2, vx_e3), (vx_e3, vx_e1)])
-        b_neighbors = get_neighbors_at(graph, b, i_layer+1)
+        b_neighbors = get_neighbors_at(graph, b, i_layer + 1)
         remaining = [x for x in [vx_e1, vx_e2, vx_e3] if x not in b_neighbors][0]
         graph.add_edge(b, remaining)
 
@@ -59,7 +59,7 @@ class P2(Production):
 
         assert i_node_data['label'] == 'I'
 
-        neighbors = get_neighbors_at(graph, i_node_id, i_node_layer-1)
+        neighbors = get_neighbors_at(graph, i_node_id, i_node_layer - 1)
         assert len(neighbors) == 1
 
         neighbors = get_neighbors_at(graph, i_node_id, i_node_layer)
