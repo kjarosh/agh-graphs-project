@@ -13,6 +13,7 @@ class P2(Production):
         i_data = graph.nodes[i]
         self.__check_prod_input(graph, prod_input)
 
+        i_data['label'] = 'i'
         i_layer = i_data['layer']
         new_layer = i_layer + 1
 
