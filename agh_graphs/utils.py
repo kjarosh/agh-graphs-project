@@ -1,6 +1,7 @@
 """
 Utility module.
 """
+import functools
 import math
 import uuid
 
@@ -119,3 +120,107 @@ def get_neighbors_at(graph: Graph, vertex, layer):
     """
     neighbors = list(graph.neighbors(vertex))
     return [v for v in neighbors if graph.nodes[v]['layer'] == layer]
+
+
+def get_vertex_pull(graph: Graph, vertex: str):
+    """
+    Return the average vector calculated from edges of the vertex.
+    """
+    positions = graph.nodes(data='position')
+    (x, y) = positions[vertex]
+    (x_pull, y_pull) = (0.0, 0.0)
+    n_count = 0
+    for neighbor in graph.neighbors(vertex):
+        n_count += 1
+        (n_x, n_y) = positions[neighbor]
+        x_pull += n_x - x
+        y_pull += n_y - y
+
+    x_pull /= n_count
+    y_pull /= n_count
+
+    return x_pull, y_pull
+
+
+def pull_vertex_towards_neighbors(graph: Graph, vertex: str, factor: float):
+    """
+    Change the position of the vertex in the direction of its
+    edges by the given factor.
+    """
+    positions = graph.nodes(data='position')
+    (x, y) = positions[vertex]
+    (x_pull, y_pull) = get_vertex_pull(graph, vertex)
+
+    x_pull *= factor
+    y_pull *= factor
+
+    graph.nodes()[vertex]['position'] = (x + x_pull, y + y_pull)
+
+
+def pull_vertices_apart(graph: Graph, vertex_a: str, vertex_b: str, factor: float):
+    """
+    Change the position of the vertices in the opposite direction obtained from
+    their edges so that distance between them is equal to the given parameter.
+    """
+    positions = graph.nodes(data='position')
+    (a_x, a_y) = positions[vertex_a]
+    (b_x, b_y) = positions[vertex_b]
+
+    (a_pull_x, a_pull_y) = get_vertex_pull(graph, vertex_a)
+    (b_pull_x, b_pull_y) = get_vertex_pull(graph, vertex_b)
+
+    (dir_x, dir_y) = (b_pull_x - a_pull_x, b_pull_y - a_pull_y)
+    dir_x *= factor / 2
+    dir_y *= factor / 2
+
+    graph.nodes()[vertex_a]['position'] = (a_x - dir_x, a_y - dir_y)
+    graph.nodes()[vertex_b]['position'] = (b_x + dir_x, b_y + dir_y)
+
+
+def find_overlapping_vertices(graph: Graph):
+    def compare(a, b):
+        a = a[1]
+        b = b[1]
+        if a['layer'] != b['layer']:
+            return b['layer'] - a['layer']
+
+        xpos = a['position']
+        ypos = b['position']
+        if xpos[0] != ypos[0]:
+            return ypos[0] - xpos[0]
+
+        return ypos[1] - xpos[1]
+
+    sorted_nodes = sorted(graph.nodes(data=True), key=functools.cmp_to_key(compare))
+
+    buckets = []
+
+    bucket = []
+    last_layer = -1
+    last_x = 0
+    for node_id, node_data in sorted_nodes:
+        layer = node_data['layer']
+        (x, y) = node_data['position']
+
+        if layer != last_layer or not math.isclose(last_x, x):
+            if len(bucket) >= 2:
+                buckets.append(bucket)
+
+            bucket = [(node_id, node_data)]
+        else:
+            bucket.append((node_id, node_data))
+
+        last_layer = layer
+        last_x = x
+
+    overlapping = []
+    for bucket in buckets:
+        for node_a_id, node_a_data in bucket:
+            for node_b_id, node_b_data in bucket:
+                if node_a_id == node_b_id:
+                    continue
+                (a_x, a_y) = node_a_data['position']
+                (b_x, b_y) = node_b_data['position']
+                if math.isclose(a_x, b_x) and math.isclose(a_y, b_y):
+                    overlapping.append((node_a_id, node_b_id))
+    return overlapping
