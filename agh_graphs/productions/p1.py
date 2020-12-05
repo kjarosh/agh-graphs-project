@@ -8,7 +8,7 @@ from utils import gen_name, add_interior
 
 class P1(Production):
 
-    def apply(self, graph: Graph, prod_input: List[str]) -> List[str]:
+    def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0) -> List[str]:
         [initial_node_id] = prod_input
         initial_node_data = graph.nodes[initial_node_id]
 
@@ -33,6 +33,9 @@ class P1(Production):
         graph.add_node(vx_br, layer=1, position=(x, 0), label='E')
         graph.add_node(vx_tl, layer=1, position=(0, y), label='E')
         graph.add_node(vx_tr, layer=1, position=(x, y), label='E')
+
+        if orientation % 2 == 1:
+            [vx_bl, vx_br, vx_tr, vx_tl] = [vx_br, vx_tr, vx_tl, vx_bl]
 
         graph.add_edge(vx_tl, vx_tr)
         graph.add_edge(vx_tr, vx_br)
