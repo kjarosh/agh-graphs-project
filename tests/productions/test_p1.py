@@ -12,7 +12,7 @@ class P1Test(unittest.TestCase):
         initial_node = gen_name()
         graph.add_node(initial_node, layer=0, position=(0.5, 0.5), label='E')
 
-        P1().apply(0, graph)
+        P1().apply(graph, [initial_node])
 
         nodes_data = graph.nodes(data=True)
 
@@ -62,9 +62,10 @@ class P1Test(unittest.TestCase):
 
     def test_different_position(self):
         graph = Graph()
-        graph.add_node(gen_name(), layer=0, position=(2, 2), label='E')
+        initial_node = gen_name()
+        graph.add_node(initial_node, layer=0, position=(2, 2), label='E')
 
-        P1().apply(0, graph)
+        P1().apply(graph, [initial_node])
 
         # check other nodes
         vx_bl = get_node_at(graph, 1, (0, 0))
@@ -78,16 +79,30 @@ class P1Test(unittest.TestCase):
 
     def test_wrong_layer(self):
         graph = Graph()
-        graph.add_node(gen_name(), layer=1, position=(0.5, 0.5), label='E')
+        initial_node = gen_name()
+        graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
 
-        P1().apply(1, graph)
+        with self.assertRaisesRegex(ValueError, 'bad layer'):
+            P1().apply(graph, [initial_node])
 
         self.assertEqual(len(graph.nodes()), 1)
 
     def test_wrong_label(self):
         graph = Graph()
-        graph.add_node(gen_name(), layer=0, position=(0.5, 0.5), label='e')
+        initial_node = gen_name()
+        graph.add_node(initial_node, layer=0, position=(0.5, 0.5), label='e')
 
-        P1().apply(0, graph)
+        with self.assertRaisesRegex(ValueError, 'bad label'):
+            P1().apply(graph, [initial_node])
+
+        self.assertEqual(len(graph.nodes()), 1)
+
+    def test_wrong_args(self):
+        graph = Graph()
+        initial_node = gen_name()
+        graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
+
+        with self.assertRaisesRegex(ValueError, 'not enough values to unpack'):
+            P1().apply(graph, [])
 
         self.assertEqual(len(graph.nodes()), 1)
