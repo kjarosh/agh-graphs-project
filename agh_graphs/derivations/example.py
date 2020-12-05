@@ -1,3 +1,9 @@
+"""
+This is an example derivation.
+If you want to test something you can use it.
+It's better to copy-paste this file as `test.py` in order
+not to accidentally commit this file.
+"""
 from matplotlib import pyplot
 from networkx import Graph
 

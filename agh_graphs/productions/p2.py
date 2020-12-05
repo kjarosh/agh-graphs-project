@@ -9,10 +9,7 @@ from utils import gen_name, add_break, add_interior, get_neighbors_at
 class P2(Production):
 
     def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0) -> List[str]:
-        if len(prod_input) != 1:
-            raise AttributeError("Bad input")
-
-        i = prod_input[0]
+        [i] = prod_input
         i_data = graph.nodes[i]
         self.__check_prod_input(graph, prod_input)
 

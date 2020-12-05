@@ -23,7 +23,15 @@ When contributing ensure that your code complies with
 In order to add a new production, create a file `agh_graphs/productions/<name>.py`
 with a class which extends `agh_graphs.production.Production`.
 Consult the docs from the module `agh_graphs.production` for details.
-When the class is ready, it may be added to the production list in `main.py`.
 
 Each production should have tests written and added to
 `tests/productions/test_<production name>.py`.
+
+## Adding derivations
+
+In order to add a new derivation, place your code in
+`agh_graphs/derivations/<name>.py`. It should be a runnable Python module,
+so ensure you have a `if __name__ == '__main__'` condition.
+
+Tests for the new derivation should be placed in
+`tests/derivations/test_<derivation name>.py`.
