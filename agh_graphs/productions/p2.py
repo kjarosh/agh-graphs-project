@@ -57,9 +57,6 @@ class P2(Production):
 
         assert i_node_data['label'] == 'I'
 
-        neighbors = get_neighbors_at(graph, i_node_id, i_node_layer - 1)
-        assert len(neighbors) == 1
-
         neighbors = get_neighbors_at(graph, i_node_id, i_node_layer)
         assert len(neighbors) == 3
         for n_id in neighbors:
