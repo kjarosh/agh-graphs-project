@@ -20,6 +20,7 @@ if __name__ == '__main__':
     [i1, i2] = P1().apply(graph, [initial_node_name])
     [i1_1, i1_2] = P2().apply(graph, [i1])
     [i2_1, i2_2] = P2().apply(graph, [i2])
+    [i3_1, i3_2] = P2().apply(graph, [i1_1])
 
     visualize_graph_3d(graph)
     pyplot.show()

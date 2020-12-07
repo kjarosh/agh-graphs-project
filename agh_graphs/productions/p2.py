@@ -13,6 +13,7 @@ class P2(Production):
         i_data = graph.nodes[i]
         self.__check_prod_input(graph, prod_input)
 
+        i_data['label'] = 'i'
         i_layer = i_data['layer']
         new_layer = i_layer + 1
 
@@ -55,9 +56,6 @@ class P2(Production):
         i_node_layer = i_node_data['layer']
 
         assert i_node_data['label'] == 'I'
-
-        neighbors = get_neighbors_at(graph, i_node_id, i_node_layer - 1)
-        assert len(neighbors) == 1
 
         neighbors = get_neighbors_at(graph, i_node_id, i_node_layer)
         assert len(neighbors) == 3
