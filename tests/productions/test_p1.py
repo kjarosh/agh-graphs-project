@@ -63,15 +63,20 @@ class P1Test(unittest.TestCase):
     def test_different_position(self):
         graph = Graph()
         initial_node = gen_name()
-        graph.add_node(initial_node, layer=0, position=(2, 2), label='E')
+        graph.add_node(initial_node, layer=0, position=(0, 0), label='E')
 
-        P1().apply(graph, [initial_node])
+        P1().apply(graph, [initial_node], positions=[
+            (0, 0),
+            (2, 1.5),
+            (1.5, 2),
+            (-0.5, 1.5),
+        ])
 
         # check other nodes
         vx_bl = get_node_at(graph, 1, (0, 0))
-        vx_br = get_node_at(graph, 1, (4, 0))
-        vx_tl = get_node_at(graph, 1, (0, 4))
-        vx_tr = get_node_at(graph, 1, (4, 4))
+        vx_br = get_node_at(graph, 1, (2, 1.5))
+        vx_tl = get_node_at(graph, 1, (1.5, 2))
+        vx_tr = get_node_at(graph, 1, (-0.5, 1.5))
         self.assertIsNotNone(vx_bl)
         self.assertIsNotNone(vx_br)
         self.assertIsNotNone(vx_tl)
