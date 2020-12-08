@@ -11,7 +11,7 @@ from networkx import Graph
 class Production(ABC):
 
     @abstractmethod
-    def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0) -> List[str]:
+    def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0, **kwargs) -> List[str]:
         """
         Apply the production on `graph`.
 
