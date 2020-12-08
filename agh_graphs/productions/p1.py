@@ -8,7 +8,7 @@ from utils import gen_name, add_interior
 
 class P1(Production):
 
-    def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0) -> List[str]:
+    def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0, **kwargs) -> List[str]:
         [initial_node_id] = prod_input
         initial_node_data = graph.nodes[initial_node_id]
 
