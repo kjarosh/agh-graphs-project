@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import gen_name, add_break, add_interior, get_neighbors_at
+from utils import gen_name, add_interior, get_neighbors_at, sort_segments_by_angle, add_break_in_segment
 
 
 class P2(Production):
@@ -36,7 +36,9 @@ class P2(Production):
         graph.add_edge(vx_e2, vx_e3)
         graph.add_edge(vx_e3, vx_e1)
 
-        b = add_break(graph, [(vx_e1, vx_e2), (vx_e2, vx_e3), (vx_e3, vx_e1)])
+        sorted_segments = sort_segments_by_angle(graph, [(vx_e1, vx_e2), (vx_e2, vx_e3), (vx_e3, vx_e1)])
+        segment_to_break = sorted_segments[orientation % 3]
+        b = add_break_in_segment(graph, segment_to_break)
         b_neighbors = get_neighbors_at(graph, b, i_layer + 1)
         remaining = [x for x in [vx_e1, vx_e2, vx_e3] if x not in b_neighbors][0]
         graph.add_edge(b, remaining)
