@@ -57,6 +57,8 @@ def add_interior(graph: Graph, a_name, b_name, c_name):
 
 def add_break(graph: Graph, segment_ids: [(str, str)]) -> str:
     """
+    You probably don't want to use this method anymore. Use add_break_in_segment instead.
+
     Adds a node that breaks proper segment.
     Proper segment is a segment with the smallest angle with positive x-axis.
 
@@ -65,8 +67,17 @@ def add_break(graph: Graph, segment_ids: [(str, str)]) -> str:
 
     Returns id of newly created vertex.
     """
-    (v1, v2) = get_segment_with_smallest_angle(graph, segment_ids)
+    segment_to_break = get_segment_with_smallest_angle(graph, segment_ids)
+    return add_break_in_segment(graph, segment_to_break)
 
+
+def add_break_in_segment(graph: Graph, segment: (str, str)) -> str:
+    """
+    Adds a node that breaks given segment.
+
+    Returns id of newly created vertex.
+    """
+    (v1, v2) = segment
     layer = graph.nodes[v1]['layer']
     v1_pos = graph.nodes[v1]['position']
     v2_pos = graph.nodes[v2]['position']
@@ -95,6 +106,25 @@ def get_node_at(graph, layer, pos):
         raise RuntimeError(
             'Multiple nodes with the given position: {}'.format(nodes))
     return nodes[0]
+
+
+def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool = False):
+    """
+    Returns list of segment ids sorted by angle with positive x-axis.
+    If `desc` is set to true the order will be descending.
+    """
+    segments = {}
+    for segment in segment_ids:
+        pos1 = graph.nodes[segment[0]]['position']
+        pos2 = graph.nodes[segment[1]]['position']
+        segments[segment] = (pos1, pos2)
+
+    comparator = lambda item: angle_with_x_axis(item[1][0], item[1][1])
+    sorted_segment_ids = [k for k, v in sorted(segments.items(), key=comparator)]
+
+    if desc:
+        sorted_segment_ids.reverse()
+    return sorted_segment_ids
 
 
 def get_segment_with_smallest_angle(graph, segment_ids):
