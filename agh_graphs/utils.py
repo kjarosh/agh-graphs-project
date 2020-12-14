@@ -68,7 +68,7 @@ def add_break(graph: Graph, segment_ids: [(str, str)]) -> str:
     Returns id of newly created vertex.
     """
     segment_to_break = get_segment_with_smallest_angle(graph, segment_ids)
-    return __break_segment(graph, segment_to_break)
+    return add_break_in_segment(graph, segment_to_break)
 
 
 def add_break_in_segment(graph: Graph, segment: (str, str)) -> str:
@@ -77,10 +77,6 @@ def add_break_in_segment(graph: Graph, segment: (str, str)) -> str:
 
     Returns id of newly created vertex.
     """
-    return __break_segment(graph, segment)
-
-
-def __break_segment(graph, segment):
     (v1, v2) = segment
     layer = graph.nodes[v1]['layer']
     v1_pos = graph.nodes[v1]['position']
@@ -123,8 +119,9 @@ def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool =
         pos2 = graph.nodes[segment[1]]['position']
         segments[segment] = (pos1, pos2)
 
-    sorted_segment_ids = [k for k, v in
-                          sorted(segments.items(), key=lambda item: angle_with_x_axis(item[1][0], item[1][1]))]
+    comparator = lambda item: angle_with_x_axis(item[1][0], item[1][1])
+    sorted_segment_ids = [k for k, v in sorted(segments.items(), key=comparator)]
+
     if desc:
         sorted_segment_ids.reverse()
     return sorted_segment_ids
