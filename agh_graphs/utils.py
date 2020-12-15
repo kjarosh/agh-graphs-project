@@ -256,3 +256,32 @@ def find_overlapping_vertices(graph: Graph):
                 if math.isclose(a_x, b_x) and math.isclose(a_y, b_y):
                     overlapping.append((node_a_id, node_b_id))
     return overlapping
+
+
+def join_overlapping_vertices(graph: Graph, vertex1, vertex2, layer):
+    """
+    Joins two vertices by moving all edges from vertex2 to vertex1 .
+    and then removes vertex2.
+
+    'vertex1', 'vertex2' - vertices to join, should be overlapping
+
+    Returns vertex1 if joined.
+    Returns None if vertices are not overlapped.
+    """
+
+    vertex1_x, vertex1_y = graph.nodes()[vertex1]['position']
+    vertex2_x, vertex2_y = graph.nodes()[vertex2]['position']
+
+    if math.isclose(vertex1_x, vertex2_x) \
+            and math.isclose(vertex1_y, vertex2_y):
+
+        vertex1_neighbours = get_neighbors_at(graph, vertex1, layer)
+        vertex2_neighbours = get_neighbors_at(graph, vertex2, layer)
+
+        for vertex2_neighbour in vertex2_neighbours:
+            if vertex2_neighbour not in vertex1_neighbours:
+                graph.add_edge(vertex1, vertex2_neighbour)
+        graph.remove_node(vertex2)
+        return vertex1
+
+    return None
