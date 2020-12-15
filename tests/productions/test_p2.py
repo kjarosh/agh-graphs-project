@@ -1,9 +1,11 @@
 import unittest
 
+from matplotlib import pyplot
 from networkx import Graph
 
 from productions.p2 import P2
 from utils import gen_name, add_interior, get_neighbors_at
+from visualize import visualize_graph_3d
 
 
 class P2Test(unittest.TestCase):
@@ -21,6 +23,9 @@ class P2Test(unittest.TestCase):
         graph.add_edge(e2, e3)
 
         i = add_interior(graph, e1, e2, e3)
+
+        visualize_graph_3d(graph)
+        pyplot.show()
 
         [i1, i2] = P2().apply(graph, [i])
 
@@ -57,6 +62,9 @@ class P2Test(unittest.TestCase):
             self.assertEqual(graph.nodes[c_neighbor]['label'], 'E')
             self.assertEqual(len(get_neighbors_at(graph, c_neighbor, graph.nodes[i1]['layer'])), 5)
 
+        visualize_graph_3d(graph)
+        pyplot.show()
+
     def test_bad_input_i_label(self):
         graph = Graph()
         e1 = gen_name()
@@ -73,8 +81,14 @@ class P2Test(unittest.TestCase):
         i = add_interior(graph, e1, e2, e3)
         graph.nodes[i]['label'] = 'i'
 
+        visualize_graph_3d(graph)
+        pyplot.show()
+
         with self.assertRaises(AssertionError):
             P2().apply(graph, [i])
+
+        visualize_graph_3d(graph)
+        pyplot.show()
 
     def test_bad_input_links(self):
         graph = Graph()
@@ -90,8 +104,14 @@ class P2Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e2, e3)
 
+        visualize_graph_3d(graph)
+        pyplot.show()
+
         with self.assertRaises(AssertionError):
             P2().apply(graph, [i])
+
+        visualize_graph_3d(graph)
+        pyplot.show()
 
     def test_bad_input_vertex_label(self):
         graph = Graph()
@@ -107,8 +127,14 @@ class P2Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e2, e3)
 
+        visualize_graph_3d(graph)
+        pyplot.show()
+
         with self.assertRaises(AssertionError):
             P2().apply(graph, [i])
+
+        visualize_graph_3d(graph)
+        pyplot.show()
 
     def test_bad_input_vertex_count(self):
         graph = Graph()
@@ -123,6 +149,11 @@ class P2Test(unittest.TestCase):
         graph.add_edge(e1, e3)
         graph.add_edge(e2, e3)
 
+        visualize_graph_3d(graph)
+        pyplot.show()
 
         with self.assertRaises(AssertionError):
             P2().apply(graph, [e1])
+
+        visualize_graph_3d(graph)
+        pyplot.show()
