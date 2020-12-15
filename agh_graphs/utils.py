@@ -122,7 +122,7 @@ def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool =
     def key(item):
         return angle_with_x_axis(item[1][0], item[1][1])
 
-    sorted_segment_ids = [k for k, v in sorted(segments.items(), key=lambda item: key(item))]
+    sorted_segment_ids = [k for k, v in sorted(segments.items(), key=key)]
 
     if desc:
         sorted_segment_ids.reverse()
