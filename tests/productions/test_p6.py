@@ -66,6 +66,20 @@ class P6Test(unittest.TestCase):
         self.assertEqual(len(I_nodes), 4)
         self.assertEqual(len(e_nodes), 5)
 
+    def testLayerElements(self):
+        graph = createCorrectGraph()
+        prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
+        [] = P6().apply(graph, prod_input)
+        i_nodes = [x for x, y in graph.nodes(data=True) if y['layer'] == 1 and y['label'] == 'i']
+        I_nodes = [x for x, y in graph.nodes(data=True) if y['layer'] == 2 and y['label'] == 'I']
+        e_nodes_1 = [x for x, y in graph.nodes(data=True) if y['layer'] == 1 and y['label'] == 'E']
+        e_nodes_2 = [x for x, y in graph.nodes(data=True) if y['layer'] == 2 and y['label'] == 'E']
+
+        self.assertEqual(len(i_nodes), 2)
+        self.assertEqual(len(I_nodes), 4)
+        self.assertEqual(len(e_nodes_1), 2)
+        self.assertEqual(len(e_nodes_2), 3)
+
 
 def createCorrectGraph():
     graph = Graph()
