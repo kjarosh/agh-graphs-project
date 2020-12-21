@@ -33,11 +33,12 @@ class P4Test(unittest.TestCase):
         [i1, i2, i3] = P4().apply(graph, [i])
 
         self.assertEqual(len(graph.nodes()), 14)
-        self.assertEqual(len(graph.edges()), 26)
+        self.assertEqual(len(graph.edges()), 27)
 
         self.assertEqual(graph.nodes[i]['label'], 'i')
-        self.assertTrue(graph.has_edge(i, i1))  # Może ulec zmianie
-        self.assertTrue(graph.has_edge(i, i3))  # Może ulec zmianie
+        self.assertTrue(graph.has_edge(i, i1))
+        self.assertTrue(graph.has_edge(i, i2))
+        self.assertTrue(graph.has_edge(i, i3))
 
         self.assertEqual(graph.nodes[i1]['label'], 'I')
         self.assertEqual(graph.nodes[i2]['label'], 'I')
