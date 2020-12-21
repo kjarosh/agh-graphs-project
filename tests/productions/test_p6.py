@@ -1,16 +1,14 @@
 import unittest
 from random import choice
-from matplotlib import pyplot
 from networkx import Graph
-
+from agh_graphs.utils import gen_name
 from agh_graphs.productions.p6 import P6
-from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
-from agh_graphs.visualize import visualize_graph_3d
+
 
 class P6Test(unittest.TestCase):
     def testCorrectGraph(self):
         graph = createCorrectGraph()
-        prod_input = [x for x,y in graph.nodes(data=True) if y['label']=='i' or y['label'] == 'I']
+        prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         [] = P6().apply(graph, prod_input)
         self.assertEqual(len(graph.nodes()), 11)
         self.assertEqual(len(graph.edges()), 19)
@@ -19,25 +17,24 @@ class P6Test(unittest.TestCase):
         e1 = gen_name()
         graph = createCorrectGraph()
         node, attr = choice(list(graph.nodes(data=True)))
-        # print(attr['layer'],type(random_node))
-        graph.add_node(e1,layer = attr['layer'],position = attr['position'],label = 'E')
-        prod_input = [x for x,y in graph.nodes(data=True) if y['label']=='i' or y['label'] == 'I']
+        graph.add_node(e1, layer=attr['layer'], position=attr['position'], label='E')
+        prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         [] = P6().apply(graph, prod_input)
         self.assertEqual(len(graph.nodes()), 12)
         self.assertEqual(len(graph.edges()), 19)
 
     def testMissingNodeGraph(self):
         graph = createCorrectGraph()
-        node = choice([x for x,y in graph.nodes(data=True) if y['label']=='E'])
+        node = choice([x for x, y in graph.nodes(data=True) if y['label'] == 'E'])
         graph.remove_node(node)
-        prod_input = [x for x,y in graph.nodes(data=True) if y['label']=='i' or y['label'] == 'I']
+        prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
     def testMissingEdgeGraph(self):
         graph = createCorrectGraph()
         edge = choice([x for x in graph.edges()])
-        graph.remove_edge(edge[0],edge[1])
+        graph.remove_edge(edge[0], edge[1])
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
@@ -54,7 +51,7 @@ class P6Test(unittest.TestCase):
         graph = createCorrectGraph()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         e_attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'E']
-        e_attributes[0]['position'] = (4.0,4.0)
+        e_attributes[0]['position'] = (4.0, 4.0)
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
@@ -65,10 +62,10 @@ class P6Test(unittest.TestCase):
         i_nodes = [x for x, y in graph.nodes(data=True) if y['label'] == 'i']
         I_nodes = [x for x, y in graph.nodes(data=True) if y['label'] == 'I']
         e_nodes = [x for x, y in graph.nodes(data=True) if y['label'] == 'E']
-
         self.assertEqual(len(i_nodes), 2)
         self.assertEqual(len(I_nodes), 4)
         self.assertEqual(len(e_nodes), 5)
+
 
 def createCorrectGraph():
     graph = Graph()
@@ -114,7 +111,7 @@ def createCorrectGraph():
     # lower layer connections
     graph.add_edge(I1, e3)
     graph.add_edge(I1, e5)
-    graph.add_edge(e3,e5)
+    graph.add_edge(e3, e5)
     graph.add_edge(I2, e4)
     graph.add_edge(I2, e5)
     graph.add_edge(e4, e5)
