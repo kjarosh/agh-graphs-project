@@ -1,13 +1,17 @@
 import unittest
 from random import choice
 from networkx import Graph
+from matplotlib import pyplot
 from agh_graphs.utils import gen_name
 from agh_graphs.productions.p6 import P6
+from agh_graphs.visualize import visualize_graph_3d
 
 
 class P6Test(unittest.TestCase):
     def testCorrectGraph(self):
         graph = createCorrectGraph()
+        visualize_graph_3d(graph)
+        pyplot.show()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         [] = P6().apply(graph, prod_input)
         self.assertEqual(len(graph.nodes()), 11)
@@ -16,34 +20,42 @@ class P6Test(unittest.TestCase):
     def testLargerGraph(self):
         e1 = gen_name()
         graph = createCorrectGraph()
-        node, attr = choice(list(graph.nodes(data=True)))
-        graph.add_node(e1, layer=attr['layer'], position=attr['position'], label='E')
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
+        attrs = [y for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
+        for node, attr in zip(prod_input,attrs):
+            graph = addTriangle(graph, node, attr)
         [] = P6().apply(graph, prod_input)
-        self.assertEqual(len(graph.nodes()), 12)
-        self.assertEqual(len(graph.edges()), 19)
+        visualize_graph_3d(graph)
+        pyplot.show()
+        self.assertEqual(len(graph.nodes()), 29)
+        self.assertEqual(len(graph.edges()), 37)
 
     def testMissingNodeGraph(self):
         graph = createCorrectGraph()
         node = choice([x for x, y in graph.nodes(data=True) if y['label'] == 'E'])
         graph.remove_node(node)
+        visualize_graph_3d(graph)
+        pyplot.show()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
     def testMissingEdgeGraph(self):
         graph = createCorrectGraph()
-        edge = choice([x for x in graph.edges()])
-        graph.remove_edge(edge[0], edge[1])
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
-        with self.assertRaises(ValueError):
-            P6().apply(graph, prod_input)
+        for edge in graph.edges():
+            graph.remove_edge(edge[0], edge[1])
+            with self.assertRaises(ValueError):
+                P6().apply(graph, prod_input)
+            graph.add_edge(edge[0], edge[1])
 
     def testBadInput(self):
         graph = createCorrectGraph()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         attributes[0]['label'] = 'E'
+        visualize_graph_3d(graph)
+        pyplot.show()
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
@@ -52,6 +64,8 @@ class P6Test(unittest.TestCase):
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         e_attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'E']
         e_attributes[0]['position'] = (4.0, 4.0)
+        visualize_graph_3d(graph)
+        pyplot.show()
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
@@ -135,4 +149,18 @@ def createCorrectGraph():
     graph.add_edge(I4, e7)
     graph.add_edge(I4, e8)
     graph.add_edge(e7, e8)
+    return graph
+
+def addTriangle(graph: Graph, node, attr):
+    e1 = gen_name()
+    e2 = gen_name()
+    e3 = gen_name()
+    x = attr['position'][0]
+    y = attr['position'][1]
+    graph.add_node(e1, layer=attr['layer'], position=(x+0.5, y+0.5), label='E')
+    graph.add_node(e2, layer=attr['layer'], position=(x, y + 0.5), label='E')
+    graph.add_node(e3, layer=attr['layer'], position=(x - 0.5, y - 0.5), label='E')
+    graph.add_edge(node, e1)
+    graph.add_edge(node, e2)
+    graph.add_edge(node, e3)
     return graph
