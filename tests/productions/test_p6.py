@@ -22,7 +22,7 @@ class P6Test(unittest.TestCase):
         graph = createCorrectGraph()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         attrs = [y for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
-        for node, attr in zip(prod_input,attrs):
+        for node, attr in zip(prod_input, attrs):
             graph = addTriangle(graph, node, attr)
         [] = P6().apply(graph, prod_input)
         visualize_graph_3d(graph)
@@ -151,13 +151,14 @@ def createCorrectGraph():
     graph.add_edge(e7, e8)
     return graph
 
+
 def addTriangle(graph: Graph, node, attr):
     e1 = gen_name()
     e2 = gen_name()
     e3 = gen_name()
     x = attr['position'][0]
     y = attr['position'][1]
-    graph.add_node(e1, layer=attr['layer'], position=(x+0.5, y+0.5), label='E')
+    graph.add_node(e1, layer=attr['layer'], position=(x + 0.5, y + 0.5), label='E')
     graph.add_node(e2, layer=attr['layer'], position=(x, y + 0.5), label='E')
     graph.add_node(e3, layer=attr['layer'], position=(x - 0.5, y - 0.5), label='E')
     graph.add_edge(node, e1)
