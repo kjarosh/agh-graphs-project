@@ -4,6 +4,7 @@ from matplotlib import pyplot
 from networkx import Graph
 from math import isclose
 
+from agh_graphs.productions.p1 import P1
 from agh_graphs.productions.p2 import P2
 from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
 from agh_graphs.visualize import visualize_graph_3d
@@ -178,3 +179,47 @@ class P2Test(unittest.TestCase):
         if visualize_tests:
             visualize_graph_3d(graph)
             pyplot.show()
+
+    def test_integrity(self):
+        graph = Graph()
+        initial_node_name = gen_name()
+        graph.add_node(initial_node_name, layer=0, position=(0.5, 0.5), label='E')
+
+        [i1, i2] = P1().apply(graph, [initial_node_name])
+        [i1_1, i1_2] = P2().apply(graph, [i1])
+        [i2_1, i2_2] = P2().apply(graph, [i2])
+        [i3_1, i3_2] = P2().apply(graph, [i1_1])
+
+        visualize_graph_3d(graph)
+        pyplot.show()
+
+        [i4_1, i4_2] = P2().apply(graph, [i1_2])
+
+        self.check_graph_integrity(graph, i1, 'i')
+        self.check_graph_integrity(graph, i2, 'i')
+        self.check_graph_integrity(graph, i1_1, 'i')
+        self.check_graph_integrity(graph, i1_2, 'i')
+        self.check_graph_integrity(graph, i2_1, 'I')
+        self.check_graph_integrity(graph, i2_2, 'I')
+        self.check_graph_integrity(graph, i3_1, 'I')
+        self.check_graph_integrity(graph, i3_2, 'I')
+        self.check_graph_integrity(graph, i4_1, 'I')
+        self.check_graph_integrity(graph, i4_2, 'I')
+
+        visualize_graph_3d(graph)
+        pyplot.show()
+
+    def check_graph_integrity(self, graph, i_node_id, expected_label):
+        i_node_data = graph.nodes[i_node_id]
+        i_node_layer = i_node_data['layer']
+
+        self.assertEqual(i_node_data['label'], expected_label)
+
+        neighbors = get_neighbors_at(graph, i_node_id, i_node_layer)
+        self.assertEqual(len(neighbors), 3)
+        for n_id in neighbors:
+            self.assertEqual(graph.nodes[n_id]['label'], 'E')
+            n_expected_neighbors = [x for x in neighbors if x != n_id]
+            n_neighbors = get_neighbors_at(graph, n_id, i_node_layer)
+            for expected_neighbor in n_expected_neighbors:
+                self.assertTrue(expected_neighbor in n_neighbors)
