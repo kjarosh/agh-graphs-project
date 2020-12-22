@@ -2,11 +2,14 @@ import unittest
 
 from matplotlib import pyplot
 from networkx import Graph
+from math import isclose
 
 from agh_graphs.productions.p2 import P2
 from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
 from agh_graphs.visualize import visualize_graph_3d
 from tests.utils import visualize_tests
+
+eps = 1e-6
 
 
 class P2Test(unittest.TestCase):
@@ -30,6 +33,13 @@ class P2Test(unittest.TestCase):
             pyplot.show()
 
         [i1, i2] = P2().apply(graph, [i])
+
+        (i1_x, i1_y) = graph.nodes[i1]['position']
+        (i2_x, i2_y) = graph.nodes[i2]['position']
+        self.assertTrue(isclose(i1_x, 1.166666, rel_tol=eps))
+        self.assertTrue(isclose(i1_y, 1.333333, rel_tol=eps))
+        self.assertTrue(isclose(i2_x, 1.5, rel_tol=eps))
+        self.assertTrue(isclose(i2_y, 1.333333, rel_tol=eps))
 
         self.assertEqual(len(graph.nodes()), 10)
         self.assertEqual(len(graph.edges()), 19)
