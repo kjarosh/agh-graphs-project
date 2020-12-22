@@ -285,3 +285,22 @@ def join_overlapping_vertices(graph: Graph, vertex1, vertex2, layer):
         return vertex1
 
     return None
+
+
+def get_node_between(graph, e1, e2, layer, eps=1e-6):
+    (e1_x, e1_y) = graph.nodes[e1]['position']
+    (e2_x, e2_y) = graph.nodes[e2]['position']
+    desired_position = ((e1_x + e2_x) / 2, (e1_y + e2_y) / 2)
+    neighbors = [n for n in graph.neighbors(e1)
+                 if n in graph.neighbors(e2)
+                 and graph.nodes[n]['layer'] == layer
+                 and graph.nodes[n]['label'] == 'E'
+                 and is_close(graph.nodes[n]['position'], desired_position, eps)]
+    assert len(neighbors) == 1
+    return neighbors[0]
+
+
+def is_close(pos1, pos2, eps):
+    x1, y1 = pos1
+    x2, y2 = pos2
+    return math.isclose(x1, x2, abs_tol=eps) and math.isclose(y1, y2, abs_tol=eps)
