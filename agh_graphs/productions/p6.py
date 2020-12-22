@@ -129,7 +129,6 @@ class P6(Production):
         # separate vertices based on side it is on (vertices on one side are connected)
         vertices_by_side = {prod_input[0]: list(), prod_input[1]: list()}
         for pair in pairs_of_lower:
-            print(pair)
             for v in pair:
                 vertices_by_side[v[1]].append(v[0])
         # Now vertices_by_side should be dict where keys are id's of interiors in upper layer
@@ -144,13 +143,19 @@ class P6(Production):
             if not graph.has_edge(v2, v3):
                 raise ValueError('Connections between lower vertices are incorrect')
 
+        # Check if middle vertices are properly connected to two interiors each
+        for side in vertices_by_side:
+            v1, v2, v3 = vertices_by_side[side]     # v3 is vertex in the middle
+            lower_interiors = get_neighbors_at(graph, side, down_layer)
+            for interior in lower_interiors:
+                if interior not in graph.neighbors(v3):
+                    raise ValueError('Connections between lower vertices are incorrect')
+
         # Check if vertices on opposite sides are connected
         # (they obviously shouldn't be right?)
         for v in vertices_by_side[prod_input[0]]:
             if any(graph.has_edge(v, v_other) for v_other in vertices_by_side[prod_input[1]]):
                 raise ValueError('Connections between lower vertices are incorrect')
-
-        # At this point I don't know what I am doing any more
 
         # Check if labels are E
         all_vertices = vertices_by_side[prod_input[0]] + vertices_by_side[prod_input[1]] + [v1_up, v2_up]
