@@ -4,9 +4,13 @@ from networkx import Graph
 
 from productions.p5 import P5
 from utils import gen_name, add_interior, get_neighbors_at, get_node_at
+from visualize import visualize_graph_layer, visualize_graph_3d
+from matplotlib import pyplot
 
 
 class P5Test(unittest.TestCase):
+    showPlots = True
+
     # add new nodes on given positions with given layer and label
     def create_nodes(self, graph, _layer, _label, vertex_positions):
         nodes = []
@@ -32,7 +36,25 @@ class P5Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e2, e3)
 
+        if self.showPlots:
+            pyplot.title("Correct input", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
+
         [i1, i3, i2a, i2b] = P5().apply(graph, [i])
+
+        if self.showPlots:
+            pyplot.title("Correct output", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
+
+            pyplot.title("Correct output (layer = 1)", fontsize=16)
+            visualize_graph_layer(graph, 1)
+            pyplot.show()
+
+            pyplot.title("Correct output (layer = 2)", fontsize=16)
+            visualize_graph_layer(graph, 2)
+            pyplot.show()
 
         # if correct number of nodes and edges
         self.assertEqual(len(graph.nodes()), 17)
@@ -101,65 +123,126 @@ class P5Test(unittest.TestCase):
 
     def test_parent_graph(self):
         graph = Graph()
-        positions = [(1.0, 1.0), (1.0, 2.0), (1.0, 3.0),
-                     (2.0, 3.0), (3.0, 3.0), (2.0, 2.0),
-                     (0.0, 0.0), (0.0, 2.0)]
+        positions = [(1.0, 1.0), (1.0, 9.0), (9.0, 1.0), 
+                     (9.0, 9.0), (5.0, 5.0), (3.0, 7.0), 
+                     (7.0, 7.0), (6.0, 6.0), (4.0, 8.0)]
 
-        [e1, e12, e2, e23, e3, e31, e0a, e0b] = self.create_nodes(graph, 1, 'E', positions)
-        self.create_edges_chain(graph, [e1, e12, e2, e23, e3, e31, e1])
-        self.create_edges_chain(graph, [e1, e0a, e0b, e1])
+        [e0a, e1, e0b, e0c, e2, e12, e3, e23, e31] = self.create_nodes(graph, 1, 'E', positions)
 
+        self.create_edges_chain(graph, [e0a, e1, e12, e0a, e2, e12])
+        self.create_edges_chain(graph, [e0a, e0b, e2, e23, e0b, e3, e23])
+        self.create_edges_chain(graph, [e0b, e0c, e3, e31, e0c, e1, e31])
+
+        i_0a_1_12 = add_interior(graph, e0a, e1, e12)
+        i_0a_12_2 = add_interior(graph, e0a, e12, e2)
+        i_0a_0b_2 = add_interior(graph, e0a, e0b, e2)
+        i_0b_2_23 = add_interior(graph, e0b, e2, e23)
+        i_0b_23_3 = add_interior(graph, e0b, e23, e3)
+        i_0b_0c_3 = add_interior(graph, e0b, e3, e0c)
+        i_0c_1_31 = add_interior(graph, e1, e31, e0c)
+        i_0c_3_31 = add_interior(graph, e31, e3, e0c)
         i = add_interior(graph, e1, e2, e3)
+
+        if self.showPlots:
+            pyplot.title("Correct subgraph input", fontsize=16)
+            visualize_graph_layer(graph, 1)
+            pyplot.show()
 
         [i1, i3, i2a, i2b] = P5().apply(graph, [i])
 
-        # check if parent_graph external links and vertices are unchanged
-        self.assertTrue(graph.has_edge(e0a, e1))
-        self.assertTrue(graph.has_edge(e0b, e1))
-        self.assertTrue(graph.has_edge(e0a, e0b))
-        self.assertEqual(graph.nodes[e0a]['label'], 'E')
-        self.assertEqual(graph.nodes[e0b]['label'], 'E')
-        self.assertEqual(len(get_neighbors_at(graph, e0a, graph.nodes[e0a]['layer'])), 2)
-        self.assertEqual(len(get_neighbors_at(graph, e0b, graph.nodes[e0b]['layer'])), 2)
-        self.assertEqual(graph.nodes[e0a]['position'], (0.0, 0.0))
-        self.assertEqual(graph.nodes[e0b]['position'], (0.0, 2.0))
+        if self.showPlots:
+            pyplot.title("Correct subgraph output", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
 
-        # check if production graph is unchanged
+            pyplot.title("Correct subgraph output (layer=1)", fontsize=16)
+            visualize_graph_layer(graph, 1)
+            pyplot.show()
+
+            pyplot.title("Correct subgraph output (layer=2)", fontsize=16)
+            visualize_graph_layer(graph, 2)
+            pyplot.show()
+
         # if edges are unchanged
+        self.assertTrue(graph.has_edge(e0a, e1))
         self.assertTrue(graph.has_edge(e1, e12))
-        self.assertTrue(graph.has_edge(e12, e2))
+        self.assertTrue(graph.has_edge(e12, e0a))
+        self.assertTrue(graph.has_edge(e0a, e2))
+        self.assertTrue(graph.has_edge(e2, e12))
+        self.assertTrue(graph.has_edge(e0a, e0b))
+        self.assertTrue(graph.has_edge(e0b, e2))
         self.assertTrue(graph.has_edge(e2, e23))
-        self.assertTrue(graph.has_edge(e23, e3))
+        self.assertTrue(graph.has_edge(e23, e0b))
+        self.assertTrue(graph.has_edge(e0b, e3))
+        self.assertTrue(graph.has_edge(e3, e23))
+        self.assertTrue(graph.has_edge(e0b, e0c))
+        self.assertTrue(graph.has_edge(e0c, e3))
         self.assertTrue(graph.has_edge(e3, e31))
-        self.assertTrue(graph.has_edge(e31, e1))
+        self.assertTrue(graph.has_edge(e31, e0c))
+        self.assertTrue(graph.has_edge(e0c, e1))
+        self.assertTrue(graph.has_edge(e1, e31))
+
+        # if interior links are unchanged
         self.assertTrue(graph.has_edge(i, e1))
         self.assertTrue(graph.has_edge(i, e2))
         self.assertTrue(graph.has_edge(i, e3))
+        self.assertTrue(graph.has_edge(i_0a_1_12, e0a))
+        self.assertTrue(graph.has_edge(i_0a_1_12, e1))
+        self.assertTrue(graph.has_edge(i_0a_1_12, e12))
+        self.assertTrue(graph.has_edge(i_0a_12_2, e0a))
+        self.assertTrue(graph.has_edge(i_0a_12_2, e12))
+        self.assertTrue(graph.has_edge(i_0a_12_2, e2))
+        self.assertTrue(graph.has_edge(i_0a_0b_2, e0a))
+        self.assertTrue(graph.has_edge(i_0a_0b_2, e0b))
+        self.assertTrue(graph.has_edge(i_0a_0b_2, e2))
+        self.assertTrue(graph.has_edge(i_0b_2_23, e0b))
+        self.assertTrue(graph.has_edge(i_0b_2_23, e2))
+        self.assertTrue(graph.has_edge(i_0b_2_23, e23))
+        self.assertTrue(graph.has_edge(i_0b_23_3, e0b))
+        self.assertTrue(graph.has_edge(i_0b_23_3, e23))
+        self.assertTrue(graph.has_edge(i_0b_23_3, e3))
+        self.assertTrue(graph.has_edge(i_0b_0c_3, e0b))
+        self.assertTrue(graph.has_edge(i_0b_0c_3, e3))
+        self.assertTrue(graph.has_edge(i_0b_0c_3, e0c))
+        self.assertTrue(graph.has_edge(i_0c_1_31, e1))
+        self.assertTrue(graph.has_edge(i_0c_1_31, e31))
+        self.assertTrue(graph.has_edge(i_0c_1_31, e0c))
+        self.assertTrue(graph.has_edge(i_0c_3_31, e31))
+        self.assertTrue(graph.has_edge(i_0c_3_31, e3))
+        self.assertTrue(graph.has_edge(i_0c_3_31, e0c))
 
-        # if labels are unchanged
+        # if vertex labels are unchanged
+        self.assertEqual(graph.nodes[e0a]['label'], 'E')
         self.assertEqual(graph.nodes[e1]['label'], 'E')
-        self.assertEqual(graph.nodes[e12]['label'], 'E')
+        self.assertEqual(graph.nodes[e0b]['label'], 'E')
+        self.assertEqual(graph.nodes[e0c]['label'], 'E')
         self.assertEqual(graph.nodes[e2]['label'], 'E')
-        self.assertEqual(graph.nodes[e23]['label'], 'E')
+        self.assertEqual(graph.nodes[e12]['label'], 'E')
         self.assertEqual(graph.nodes[e3]['label'], 'E')
+        self.assertEqual(graph.nodes[e23]['label'], 'E')
         self.assertEqual(graph.nodes[e31]['label'], 'E')
 
         # if number of neighbors is unchanged
-        self.assertEqual(len(get_neighbors_at(graph, e1, graph.nodes[e1]['layer'])), 5)
-        self.assertEqual(len(get_neighbors_at(graph, e12, graph.nodes[e1]['layer'])), 2)
-        self.assertEqual(len(get_neighbors_at(graph, e2, graph.nodes[e1]['layer'])), 3)
-        self.assertEqual(len(get_neighbors_at(graph, e23, graph.nodes[e1]['layer'])), 2)
-        self.assertEqual(len(get_neighbors_at(graph, e3, graph.nodes[e1]['layer'])), 3)
-        self.assertEqual(len(get_neighbors_at(graph, e31, graph.nodes[e1]['layer'])), 2)
-        self.assertEqual(len(get_neighbors_at(graph, i, graph.nodes[i]['layer'])), 3)
+        # if each vertex has correct number of neighbors (based on neighbour interiors count)
+        for n in [e0a, e1, e0b, e0c, e2, e12, e3, e23, e31]:
+            node_neighbors = get_neighbors_at(graph, n, graph.nodes[n]['layer'])
+            i_neighbors = [x for x in node_neighbors if graph.nodes[x]['label'] == 'I' or graph.nodes[x]['label'] == 'i']
+            e_neighbors = [x for x in node_neighbors if graph.nodes[x]['label'] == 'E' or graph.nodes[x]['label'] == 'e']
+            if len(e_neighbors) == len(i_neighbors):
+                self.assertEqual(len(node_neighbors), len(i_neighbors) * 2)
+            else:
+                self.assertEqual(len(node_neighbors), (len(i_neighbors) * 2) + 1)
 
         # if vertices position is unchanged
-        self.assertEqual(graph.nodes[e1]['position'], (1.0, 1.0))
-        self.assertEqual(graph.nodes[e12]['position'], (1.0, 2.0))
-        self.assertEqual(graph.nodes[e2]['position'], (1.0, 3.0))
-        self.assertEqual(graph.nodes[e23]['position'], (2.0, 3.0))
-        self.assertEqual(graph.nodes[e3]['position'], (3.0, 3.0))
-        self.assertEqual(graph.nodes[e31]['position'], (2.0, 2.0))
+        self.assertEqual(graph.nodes[e0a]['position'], (1.0, 1.0))
+        self.assertEqual(graph.nodes[e1]['position'], (1.0, 9.0))
+        self.assertEqual(graph.nodes[e0b]['position'], (9.0, 1.0))
+        self.assertEqual(graph.nodes[e0c]['position'], (9.0, 9.0))
+        self.assertEqual(graph.nodes[e2]['position'], (5.0, 5.0))
+        self.assertEqual(graph.nodes[e12]['position'], (3.0, 7.0))
+        self.assertEqual(graph.nodes[e3]['position'], (7.0, 7.0))
+        self.assertEqual(graph.nodes[e23]['position'], (6.0, 6.0))
+        self.assertEqual(graph.nodes[e31]['position'], (4.0, 8.0))
 
     def test_bad_input_vertex_count(self):
         graph = Graph()
@@ -176,6 +259,11 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 6)
         self.assertEqual(len(graph.edges()), 8)
 
+        if self.showPlots:
+            pyplot.title("Vertex missing", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
+
     def test_bad_input_vertex_position(self):
         graph = Graph()
         positions = [(1.0, 1.0), (1.5, 2.0), (1.0, 3.0),
@@ -190,6 +278,11 @@ class P5Test(unittest.TestCase):
             [i1, i3, i2a, i2b] = P5().apply(graph, [i])
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
+
+        if self.showPlots:
+            pyplot.title("Wrong vertex position", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_bad_input_vertex_label(self):
         graph = Graph()
@@ -209,6 +302,11 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
 
+        if self.showPlots:
+            pyplot.title("Wrong 'e' label", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
+
     def test_bad_input_i_label(self):
         graph = Graph()
         positions = [(1.0, 1.0), (1.0, 2.0), (1.0, 3.0),
@@ -226,6 +324,11 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
 
+        if self.showPlots:
+            pyplot.title("Wrong 'i' label", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
+
     def test_bad_input_edge_link_missing(self):
         graph = Graph()
         positions = [(1.0, 1.0), (1.0, 2.0), (1.0, 3.0),
@@ -241,3 +344,8 @@ class P5Test(unittest.TestCase):
             [i1, i3, i2a, i2b] = P5().apply(graph, [i])
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 8)
+
+        if self.showPlots:
+            pyplot.title("Edge link missing", fontsize=16)
+            visualize_graph_3d(graph)
+            pyplot.show()
