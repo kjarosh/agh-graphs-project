@@ -285,3 +285,18 @@ def join_overlapping_vertices(graph: Graph, vertex1, vertex2, layer):
         return vertex1
 
     return None
+
+
+def get_common_neighbors(graph: Graph, v1: str, v2: str, on_layer: int = None) -> [str]:
+    """
+    Returns common neighbors of vertexes `v1` and `v2` that are on layer `on_layer`
+
+    If `on_layer` is `None` (default) all common neighbors are returned.
+    """
+    neighbors1 = set(graph.neighbors(v1))
+    neighbors2 = set(graph.neighbors(v2))
+    common = neighbors1 & neighbors2
+    if on_layer:
+        return [v for v in common if graph.nodes[v]['layer'] == on_layer]
+    else:
+        return list(common)
