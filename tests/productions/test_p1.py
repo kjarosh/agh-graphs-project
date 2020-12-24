@@ -3,9 +3,10 @@ import unittest
 from matplotlib import pyplot
 from networkx import Graph
 
-from productions.p1 import P1
-from utils import gen_name, get_node_at
-from visualize import visualize_graph_3d
+from agh_graphs.productions.p1 import P1
+from agh_graphs.utils import gen_name, get_node_at
+from agh_graphs.visualize import visualize_graph_3d
+from tests.test_utils import visualize_tests
 
 
 class P1Test(unittest.TestCase):
@@ -14,8 +15,9 @@ class P1Test(unittest.TestCase):
         initial_node = gen_name()
         graph.add_node(initial_node, layer=0, position=(0.5, 0.5), label='E')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         P1().apply(graph, [initial_node])
 
@@ -65,16 +67,18 @@ class P1Test(unittest.TestCase):
         self.assertTrue(graph.has_edge(vx_i2, vx_tl))
         self.assertTrue(graph.has_edge(vx_i2, vx_tr))
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_different_position(self):
         graph = Graph()
         initial_node = gen_name()
         graph.add_node(initial_node, layer=0, position=(0, 0), label='E')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         P1().apply(graph, [initial_node], positions=[
             (0, 0),
@@ -93,53 +97,60 @@ class P1Test(unittest.TestCase):
         self.assertIsNotNone(vx_tl)
         self.assertIsNotNone(vx_tr)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_wrong_layer(self):
         graph = Graph()
         initial_node = gen_name()
         graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaisesRegex(ValueError, 'bad layer'):
             P1().apply(graph, [initial_node])
 
         self.assertEqual(len(graph.nodes()), 1)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_wrong_label(self):
         graph = Graph()
         initial_node = gen_name()
         graph.add_node(initial_node, layer=0, position=(0.5, 0.5), label='e')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaisesRegex(ValueError, 'bad label'):
             P1().apply(graph, [initial_node])
 
         self.assertEqual(len(graph.nodes()), 1)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_wrong_args(self):
         graph = Graph()
         initial_node = gen_name()
         graph.add_node(initial_node, layer=1, position=(0.5, 0.5), label='E')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaisesRegex(ValueError, 'not enough values to unpack'):
             P1().apply(graph, [])
 
         self.assertEqual(len(graph.nodes()), 1)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()

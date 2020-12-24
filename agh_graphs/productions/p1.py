@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import gen_name, add_interior
+from agh_graphs.utils import gen_name, add_interior
 
 
 class P1(Production):

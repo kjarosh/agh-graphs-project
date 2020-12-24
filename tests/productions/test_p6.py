@@ -5,13 +5,15 @@ from matplotlib import pyplot
 from agh_graphs.utils import gen_name
 from agh_graphs.productions.p6 import P6
 from agh_graphs.visualize import visualize_graph_3d
+from tests.test_utils import visualize_tests
 
 
 class P6Test(unittest.TestCase):
     def testCorrectGraph(self):
         graph = createCorrectGraph()
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         [] = P6().apply(graph, prod_input)
         self.assertEqual(len(graph.nodes()), 11)
@@ -25,8 +27,9 @@ class P6Test(unittest.TestCase):
         for node, attr in zip(prod_input, attrs):
             graph = addTriangle(graph, node, attr)
         [] = P6().apply(graph, prod_input)
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
         self.assertEqual(len(graph.nodes()), 29)
         self.assertEqual(len(graph.edges()), 37)
 
@@ -34,8 +37,9 @@ class P6Test(unittest.TestCase):
         graph = createCorrectGraph()
         node = choice([x for x, y in graph.nodes(data=True) if y['label'] == 'E'])
         graph.remove_node(node)
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
@@ -54,8 +58,9 @@ class P6Test(unittest.TestCase):
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         attributes[0]['label'] = 'E'
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
@@ -64,8 +69,9 @@ class P6Test(unittest.TestCase):
         prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
         e_attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'E']
         e_attributes[0]['position'] = (4.0, 4.0)
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
         with self.assertRaises(ValueError):
             P6().apply(graph, prod_input)
 
