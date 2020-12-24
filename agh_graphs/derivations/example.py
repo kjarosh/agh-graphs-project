@@ -7,10 +7,10 @@ not to accidentally commit this file.
 from matplotlib import pyplot
 from networkx import Graph
 
-from productions.p1 import P1
-from productions.p2 import P2
-from utils import gen_name
-from visualize import visualize_graph_layer, visualize_graph_3d
+from agh_graphs.productions.p1 import P1
+from agh_graphs.productions.p2 import P2
+from agh_graphs.utils import gen_name
+from agh_graphs.visualize import visualize_graph_layer, visualize_graph_3d
 
 if __name__ == '__main__':
     graph = Graph()

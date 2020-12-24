@@ -6,7 +6,7 @@ import networkx
 import numpy as np
 from networkx import Graph
 
-from utils import find_overlapping_vertices, pull_vertices_apart, pull_vertex_towards_neighbors
+from agh_graphs.utils import find_overlapping_vertices, pull_vertices_apart, pull_vertex_towards_neighbors
 
 
 def visualize_graph_layer(graph: Graph, layer: int):
