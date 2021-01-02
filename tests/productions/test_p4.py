@@ -3,9 +3,9 @@ import unittest
 from matplotlib import pyplot
 from networkx import Graph
 
-from productions.p4 import P4
-from utils import gen_name, add_interior, get_neighbors_at
-from visualize import visualize_graph_3d
+from agh_graphs.productions.p4 import P4
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
+from agh_graphs.visualize import visualize_graph_3d
 
 
 class P4Test(unittest.TestCase):
