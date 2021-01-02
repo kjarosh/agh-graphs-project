@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import gen_name, add_interior, get_neighbors_at, sort_segments_by_angle, add_break_in_segment
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, sort_segments_by_angle, add_break_in_segment
 
 
 class P2(Production):
