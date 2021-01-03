@@ -251,36 +251,34 @@ def find_overlapping_vertices(graph: Graph):
             for node_b_id, node_b_data in bucket:
                 if node_a_id == node_b_id:
                     continue
-                (a_x, a_y) = node_a_data['position']
-                (b_x, b_y) = node_b_data['position']
-                if math.isclose(a_x, b_x) and math.isclose(a_y, b_y):
+                pos_a = node_a_data['position']
+                pos_b = node_b_data['position']
+                if is_close(pos_a, pos_b):
                     overlapping.append((node_a_id, node_b_id))
     return overlapping
 
 
 def join_overlapping_vertices(graph: Graph, vertex1, vertex2, layer):
     """
-    Joins two vertices by moving all edges from vertex2 to vertex1 .
-    and then removes vertex2.
+    Joins two vertices by moving all edges from `vertex2` to `vertex1`,
+    then it removes `vertex2`.
 
     'vertex1', 'vertex2' - vertices to join, should be overlapping
 
     Returns vertex1 if joined.
-    Returns None if vertices are not overlapped.
+    Returns None if vertices are not overlapping.
     """
 
-    vertex1_x, vertex1_y = graph.nodes()[vertex1]['position']
-    vertex2_x, vertex2_y = graph.nodes()[vertex2]['position']
+    v1_pos = graph.nodes()[vertex1]['position']
+    v2_pos = graph.nodes()[vertex2]['position']
 
-    if math.isclose(vertex1_x, vertex2_x) \
-            and math.isclose(vertex1_y, vertex2_y):
+    if is_close(v1_pos, v2_pos):
+        vertex1_neighbors = get_neighbors_at(graph, vertex1, layer)
+        vertex2_neighbors = get_neighbors_at(graph, vertex2, layer)
 
-        vertex1_neighbours = get_neighbors_at(graph, vertex1, layer)
-        vertex2_neighbours = get_neighbors_at(graph, vertex2, layer)
-
-        for vertex2_neighbour in vertex2_neighbours:
-            if vertex2_neighbour not in vertex1_neighbours:
-                graph.add_edge(vertex1, vertex2_neighbour)
+        for vertex2_neighbor in vertex2_neighbors:
+            if vertex2_neighbor not in vertex1_neighbors:
+                graph.add_edge(vertex1, vertex2_neighbor)
         graph.remove_node(vertex2)
         return vertex1
 
@@ -302,20 +300,28 @@ def get_common_neighbors(graph: Graph, v1: str, v2: str, on_layer: int = None) -
         return list(common)
 
 
-def get_node_between(graph, e1, e2, layer, eps=1e-6):
-    (e1_x, e1_y) = graph.nodes[e1]['position']
-    (e2_x, e2_y) = graph.nodes[e2]['position']
-    desired_position = ((e1_x + e2_x) / 2, (e1_y + e2_y) / 2)
-    neighbors = [n for n in graph.neighbors(e1)
-                 if n in graph.neighbors(e2)
-                 and graph.nodes[n]['layer'] == layer
-                 and graph.nodes[n]['label'] == 'E'
-                 and is_close(graph.nodes[n]['position'], desired_position, eps)]
-    assert len(neighbors) == 1
+def get_vertex_between(graph, v1, v2, layer=None, label=None):
+    """
+    Returns the node between `v1` and `v2` on layer `layer` with
+    label `label`. Returns `None` if not found.
+
+    Parameters `layer` or `label` may be `None`, and they are not
+    taken into account when searching then.
+    """
+    (v1_x, v1_y) = graph.nodes[v1]['position']
+    (v2_x, v2_y) = graph.nodes[v2]['position']
+    desired_position = ((v1_x + v2_x) / 2, (v1_y + v2_y) / 2)
+    neighbors = [n for n in graph.neighbors(v1)
+                 if n in graph.neighbors(v2)
+                 and (layer is None or graph.nodes[n]['layer'] == layer)
+                 and (label is None or graph.nodes[n]['label'] == label)
+                 and is_close(graph.nodes[n]['position'], desired_position)]
+    if len(neighbors) != 1:
+        return None
     return neighbors[0]
 
 
-def is_close(pos1, pos2, eps):
+def is_close(pos1, pos2):
     x1, y1 = pos1
     x2, y2 = pos2
-    return math.isclose(x1, x2, abs_tol=eps) and math.isclose(y1, y2, abs_tol=eps)
+    return math.isclose(x1, x2) and math.isclose(y1, y2)

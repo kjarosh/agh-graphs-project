@@ -112,7 +112,6 @@ class P12(Production):
                 elif graph.nodes()[v]['position'] == pos_v2:
                     pairs_of_lower[1].add((v, lower_to_upper[interior]))
 
-
         # Check if pair is indeed pair of vertices
         for pair in pairs_of_lower:
             s = set(map(lambda x: x[0], pair))
