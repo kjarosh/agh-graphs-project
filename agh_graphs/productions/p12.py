@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import get_neighbors_at, find_overlapping_vertices, join_overlapping_vertices, get_common_neighbors
+from agh_graphs.utils import get_neighbors_at, join_overlapping_vertices, get_common_neighbors
 
 
 class P12(Production):
@@ -111,7 +111,6 @@ class P12(Production):
                     pairs_of_lower[0].add((v, lower_to_upper[interior]))
                 elif graph.nodes()[v]['position'] == pos_v2:
                     pairs_of_lower[1].add((v, lower_to_upper[interior]))
-
 
         # Check if pair is indeed pair of vertices
         for pair in pairs_of_lower:

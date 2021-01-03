@@ -6,6 +6,7 @@ from networkx import Graph
 from agh_graphs.productions.p4 import P4
 from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
 from agh_graphs.visualize import visualize_graph_3d
+from tests.test_utils import visualize_tests
 
 
 class P4Test(unittest.TestCase):
@@ -27,8 +28,9 @@ class P4Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e3, e4)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         [i1, i2, i3] = P4().apply(graph, [i])
 
@@ -91,8 +93,9 @@ class P4Test(unittest.TestCase):
             self.assertEqual(graph.nodes[n]['label'], 'E')
             self.assertEqual(7, len(get_neighbors_at(graph, n, graph.nodes[i1]['layer'])))
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_incorrect_label(self):
         graph = Graph()
@@ -113,14 +116,16 @@ class P4Test(unittest.TestCase):
         i = add_interior(graph, e1, e3, e4)
         graph.nodes[i]['label'] = 'i'
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaises(AssertionError):
             P4().apply(graph, [i])
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_missing_edges(self):
         graph = Graph()
@@ -138,14 +143,16 @@ class P4Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e3, e4)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaises(AssertionError):
             P4().apply(graph, [i])
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_incorrect_node_label(self):
         graph = Graph()
@@ -165,14 +172,16 @@ class P4Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e3, e4)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaises(AssertionError):
             P4().apply(graph, [i])
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_incorrect_interior(self):
         graph = Graph()
@@ -190,14 +199,16 @@ class P4Test(unittest.TestCase):
         graph.add_edge(e4, e5)
         graph.add_edge(e5, e1)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         with self.assertRaises(AssertionError):
             P4().apply(graph, [e1])
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_risky_triangle_break(self):
         graph = Graph()
@@ -222,8 +233,9 @@ class P4Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e3, e4)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         [i1, i2, i3] = P4().apply(graph, [i])
 
@@ -286,8 +298,9 @@ class P4Test(unittest.TestCase):
             self.assertEqual(graph.nodes[n]['label'], 'E')
             self.assertEqual(7, len(get_neighbors_at(graph, n, graph.nodes[i1]['layer'])))
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def test_in_bigger_graph(self):
         graph = Graph()
@@ -330,8 +343,9 @@ class P4Test(unittest.TestCase):
         I2 = add_interior(graph, e7, e8, e4)
         I3 = add_interior(graph, e7, e8, e9)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         [i1, i2, i3] = P4().apply(graph, [I])
 
@@ -394,5 +408,6 @@ class P4Test(unittest.TestCase):
             self.assertEqual(graph.nodes[n]['label'], 'E')
             self.assertEqual(7, len(get_neighbors_at(graph, n, graph.nodes[i1]['layer'])))
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()

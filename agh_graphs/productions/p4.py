@@ -4,7 +4,7 @@ from networkx import Graph
 
 from agh_graphs.production import Production
 from agh_graphs.utils import get_neighbors_at, gen_name, sort_segments_by_angle, add_interior, \
-    get_node_between
+    get_vertex_between
 
 
 class P4(Production):
@@ -40,7 +40,8 @@ class P4(Production):
         sorted_segments = sort_segments_by_angle(graph, [(new_e1, new_e2), (new_e1, new_e3)])
         segment_to_break = sorted_segments[orientation % 2]
         (v1, v2) = segment_to_break
-        b = get_node_between(graph, v1, v2, new_layer)
+        b = get_vertex_between(graph, v1, v2, new_layer, 'E')
+        assert b is not None
         b_opposite_1 = [e for e in [new_e1, new_e2, new_e3] if e not in segment_to_break][0]
         b_opposite_2 = [e for e in [new_e12, new_e13] if e != b][0]
         graph.add_edge(b, b_opposite_1)
@@ -73,8 +74,10 @@ class P4(Production):
         assert len(nodes_with_other_neighbors) == 1
         e1 = nodes_with_other_neighbors[0]
         (e2, e3) = [e for e in i_neighbors if e != e1]
-        e12 = get_node_between(graph, e1, e2, i_layer)
-        e13 = get_node_between(graph, e1, e3, i_layer)
+        e12 = get_vertex_between(graph, e1, e2, i_layer, 'E')
+        e13 = get_vertex_between(graph, e1, e3, i_layer, 'E')
+        assert e12 is not None
+        assert e13 is not None
 
         cycle_list = [e3, e13, e1, e12, e2]
         for i, e in enumerate(cycle_list):
