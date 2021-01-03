@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import get_neighbors_at, find_overlapping_vertices, join_overlapping_vertices, get_common_neighbors
+from agh_graphs.utils import get_neighbors_at, join_overlapping_vertices, get_common_neighbors
 
 
 class P12(Production):

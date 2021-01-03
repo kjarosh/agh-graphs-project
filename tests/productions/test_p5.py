@@ -2,15 +2,15 @@ import unittest
 
 from networkx import Graph
 
-from productions.p5 import P5
-from utils import gen_name, add_interior, get_neighbors_at, get_node_at
-from visualize import visualize_graph_layer, visualize_graph_3d
+from agh_graphs.productions.p5 import P5
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, get_node_at
+from agh_graphs.visualize import visualize_graph_layer, visualize_graph_3d
 from matplotlib import pyplot
+
+from tests.test_utils import visualize_tests
 
 
 class P5Test(unittest.TestCase):
-    showPlots = True
-
     # add new nodes on given positions with given layer and label
     def create_nodes(self, graph, _layer, _label, vertex_positions):
         nodes = []
@@ -36,14 +36,14 @@ class P5Test(unittest.TestCase):
 
         i = add_interior(graph, e1, e2, e3)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Correct input", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
 
         [i1, i3, i2a, i2b] = P5().apply(graph, [i])
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Correct output", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -143,14 +143,14 @@ class P5Test(unittest.TestCase):
         i_0c_3_31 = add_interior(graph, e31, e3, e0c)
         i = add_interior(graph, e1, e2, e3)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Correct subgraph input", fontsize=16)
             visualize_graph_layer(graph, 1)
             pyplot.show()
 
         [i1, i3, i2a, i2b] = P5().apply(graph, [i])
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Correct subgraph output", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -259,7 +259,7 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 6)
         self.assertEqual(len(graph.edges()), 8)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Vertex missing", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -279,7 +279,7 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Wrong vertex position", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -302,7 +302,7 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Wrong 'e' label", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -324,7 +324,7 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 9)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Wrong 'i' label", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()
@@ -345,7 +345,7 @@ class P5Test(unittest.TestCase):
         self.assertEqual(len(graph.nodes()), 7)
         self.assertEqual(len(graph.edges()), 8)
 
-        if self.showPlots:
+        if visualize_tests:
             pyplot.title("Edge link missing", fontsize=16)
             visualize_graph_3d(graph)
             pyplot.show()

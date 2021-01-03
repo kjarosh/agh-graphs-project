@@ -3,7 +3,7 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from utils import gen_name, add_interior, get_neighbors_at, angle_with_x_axis
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, angle_with_x_axis
 import math
 from math import isclose
 
