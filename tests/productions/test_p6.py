@@ -5,7 +5,7 @@ from matplotlib import pyplot
 from agh_graphs.utils import gen_name
 from agh_graphs.productions.p6 import P6
 from agh_graphs.visualize import visualize_graph_3d
-from tests.test_utils import visualize_tests
+from tests.utils import visualize_tests
 
 
 class P6Test(unittest.TestCase):

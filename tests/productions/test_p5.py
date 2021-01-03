@@ -7,7 +7,7 @@ from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, get_node_
 from agh_graphs.visualize import visualize_graph_layer, visualize_graph_3d
 from matplotlib import pyplot
 
-from tests.test_utils import visualize_tests
+from tests.utils import visualize_tests
 
 
 class P5Test(unittest.TestCase):
