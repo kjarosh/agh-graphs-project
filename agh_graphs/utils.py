@@ -22,11 +22,11 @@ def centroid(a, b, c):
 
 def angle_with_x_axis(a: (int, int), b: (int, int)) -> float:
     """
-    Returns angle (0-360) between segment and positive X-axis
+    Returns angle (0-180) between segment and positive X-axis
     """
     x = b[0] - a[0]
     y = b[1] - a[1]
-    return math.degrees(math.atan2(y, x)) % 360
+    return math.degrees(math.atan2(y, x)) % 180
 
 
 def add_interior(graph: Graph, a_name, b_name, c_name):
@@ -53,22 +53,6 @@ def add_interior(graph: Graph, a_name, b_name, c_name):
     graph.add_edge(i_name, c_name)
 
     return i_name
-
-
-def add_break(graph: Graph, segment_ids: [(str, str)]) -> str:
-    """
-    You probably don't want to use this method anymore. Use add_break_in_segment instead.
-
-    Adds a node that breaks proper segment.
-    Proper segment is a segment with the smallest angle with positive x-axis.
-
-    `segment_ids` - list of tuples. Each tuple consists of two vertexes ids that represents a segment. This means
-    that there has to be an edge between these vertexes.
-
-    Returns id of newly created vertex.
-    """
-    segment_to_break = get_segment_with_smallest_angle(graph, segment_ids)
-    return add_break_in_segment(graph, segment_to_break)
 
 
 def add_break_in_segment(graph: Graph, segment: (str, str)) -> str:
@@ -108,6 +92,16 @@ def get_node_at(graph, layer, pos):
     return nodes[0]
 
 
+def sort_vertices_by_coordinates(graph: Graph, vertices: [str]):
+    """
+    Returns list of vertices sorted by x coordinate and then y coordinate.
+    """
+    def key(item):
+        return graph.nodes()[item]['position']
+
+    return sorted(vertices, key=key)
+
+
 def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool = False):
     """
     Returns list of segment ids sorted by angle with positive x-axis.
@@ -127,23 +121,6 @@ def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool =
     if desc:
         sorted_segment_ids.reverse()
     return sorted_segment_ids
-
-
-def get_segment_with_smallest_angle(graph, segment_ids):
-    segments = []
-    for segment in segment_ids:
-        pos1 = graph.nodes[segment[0]]['position']
-        pos2 = graph.nodes[segment[1]]['position']
-        segments.append((pos1, pos2))
-
-    min_angle = angle_with_x_axis(segments[0][0], segments[0][1])
-    min_segment_idx = 0
-    for i in range(0, len(segments)):
-        angle = angle_with_x_axis(segments[i][0], segments[i][1])
-        if angle < min_angle:
-            min_angle = angle
-            min_segment_idx = i
-    return segment_ids[min_segment_idx]
 
 
 def get_neighbors_at(graph: Graph, vertex, layer):

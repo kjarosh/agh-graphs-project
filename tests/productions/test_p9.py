@@ -6,7 +6,7 @@ from networkx import Graph
 from agh_graphs.productions.p9 import P9
 from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, get_node_at
 from agh_graphs.visualize import visualize_graph_3d
-from tests.test_utils import visualize_tests
+from tests.utils import visualize_tests
 
 
 class P9Test(unittest.TestCase):
