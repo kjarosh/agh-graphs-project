@@ -113,17 +113,6 @@ class P7Test(unittest.TestCase):
             pyplot.show()
         with self.assertRaises(ValueError):
             P7().apply(graph, prod_input)
-    #
-    def testBadCoordinates(self):
-        graph = createCorrectGraph()
-        prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
-        e_attributes = [y for x, y in graph.nodes(data=True) if y['label'] == 'E']
-        e_attributes[0]['position'] = (4.0, 4.0)
-        if visualize_tests:
-            visualize_graph_3d(graph)
-            pyplot.show()
-        with self.assertRaises(ValueError):
-            P7().apply(graph, prod_input)
 
 
 def createCorrectGraph():
