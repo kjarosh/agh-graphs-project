@@ -33,7 +33,7 @@ class P7(Production):
         visualize_graph_3d(graph)
         pyplot.show()
 
-        return []
+        return prod_input
 
 
     @staticmethod
@@ -133,103 +133,3 @@ class P7(Production):
         if len(n2) != 2:
             raise ValueError('There are not exactly 2 vertices with the same position')
         return down_layer, zip(n1, n2)
-
-
-def createCorrectGraph():
-    graph = Graph()
-    e01 = "e01"
-    e02 = "e02"
-    e03 = "e03"
-    e04 = "e04"
-    i1 = "i1"
-    i2 = "i2"
-    I1 = "I1"
-    I2 = "I2"
-    I3 = "I3"
-    I4 = "I4"
-    e11 = "e11"
-    e12 = "e12"
-    e13 = "e13"
-    e14 = "e14"
-    e15 = "e15"
-    e16 = "e16"
-    e17 = "e17"
-
-    graph.add_node(e01, layer=0, position=(0.0, 0.0), label='E')
-    graph.add_node(e02, layer=0, position=(0.0, 2.0), label='E')
-    graph.add_node(e03, layer=0, position=(2.0, 0.0), label='E')
-    graph.add_node(e04, layer=0, position=(2.0, 2.0), label='E')
-    graph.add_node(i2, layer=0, position=(0.5, 1.5), label='i')
-    graph.add_node(i1, layer=0, position=(1.5, 0.5), label='i')
-
-    graph.add_node(I1, layer=1, position=(0.5, 0.5), label='I')
-    graph.add_node(I2, layer=1, position=(0.5, 1.5), label='I')
-    graph.add_node(I3, layer=1, position=(1.5, 0.5), label='I')
-    graph.add_node(I4, layer=1, position=(1.5, 1.5), label='I')
-    graph.add_node(e11, layer=1, position=(0.0, 0.0), label='E')
-    graph.add_node(e12, layer=1, position=(0.0, 2.0), label='E')
-    graph.add_node(e13, layer=1, position=(2.0, 0.0), label='E')
-    graph.add_node(e14, layer=1, position=(2.0, 2.0), label='E')
-    graph.add_node(e15, layer=1, position=(2.0, 2.0), label='E')
-    graph.add_node(e16, layer=1, position=(1.0, 1.0), label='E')
-    graph.add_node(e17, layer=1, position=(1.0, 1.0), label='E')
-    # upper layer edges
-    graph.add_edge(e01, i1)
-    graph.add_edge(e01, i2)
-    graph.add_edge(e04, i1)
-    graph.add_edge(e04, i2)
-    graph.add_edge(e03, i1)
-    graph.add_edge(e02, i2)
-
-    graph.add_edge(e01, e02)
-    graph.add_edge(e02, e04)
-    graph.add_edge(e01, e04)
-
-    graph.add_edge(e01, e03)
-    graph.add_edge(e04, e03)
-
-    # interlayer connections
-    graph.add_edge(i2, I1)
-    graph.add_edge(i2, I2)
-    graph.add_edge(i1, I3)
-    graph.add_edge(i1, I4)
-
-    # lower layer interior connections
-    graph.add_edge(I1, e11)
-    graph.add_edge(I1, e12)
-    graph.add_edge(I1, e16)
-
-    graph.add_edge(I2, e12)
-    graph.add_edge(I2, e16)
-    graph.add_edge(I2, e14)
-
-    graph.add_edge(I3, e13)
-    graph.add_edge(I3, e17)
-    graph.add_edge(I3, e11)
-
-    graph.add_edge(I4, e15)
-    graph.add_edge(I4, e17)
-    graph.add_edge(I4, e13)
-
-    # lower layer edges connections
-    graph.add_edge(e11, e12)
-    graph.add_edge(e11, e16)
-    graph.add_edge(e12, e16)
-
-    graph.add_edge(e14, e16)
-    graph.add_edge(e12, e14)
-
-    graph.add_edge(e11, e13)
-    graph.add_edge(e13, e17)
-    graph.add_edge(e11, e17)
-
-    graph.add_edge(e15, e13)
-    graph.add_edge(e15, e17)
-
-    return graph
-
-
-if __name__ == '__main__':
-    graph = createCorrectGraph()
-    prod_input = [x for x, y in graph.nodes(data=True) if y['label'] == 'i' or y['label'] == 'I']
-    [] = P7().apply(graph, prod_input)
