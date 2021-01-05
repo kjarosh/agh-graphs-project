@@ -12,7 +12,7 @@ def common_elements(list1, list2):
     return list(set(list1).intersection(list2))
 
 
-def is_triangle(graph, vertices):
+def are_connected(graph, vertices):
     for v1, v2 in [(vertices[i], vertices[j])
                    for i in range(len(vertices))
                    for j in range(i + 1, len(vertices))]:
@@ -80,18 +80,16 @@ class P7(Production):
         def check_structure(interior_nodes, layer_num):
             for interior_node in interior_nodes:
                 neighbours = get_neighbors_at(graph, interior_node, layer_num)
-                if len(neighbours) != 3:
+                if len(neighbours) > 3:
                     raise ValueError('Wrong number of neighbours of an interior vertex')
                 for n in neighbours:
                     if graph.nodes()[n]['label'] != "E":
                         raise ValueError('Vertex does not have "E" label')
-                if not is_triangle(graph, neighbours):
-                    raise ValueError('Neighbours of an interior vertex are not a triangle')
 
             common_neighbors = get_common_neighbors(graph, interior_nodes[0], interior_nodes[1],
                                                     layer_num)
-            if len(common_neighbors) != 2:
-                raise ValueError('Interiors do not have 2 common neighbors')
+            if len(common_neighbors) > 2:
+                raise ValueError('Interiors have more than 2 common neighbors')
 
         # Check correctness of upper layer
         check_structure(up_layer_nodes, up_layer)
@@ -119,11 +117,6 @@ class P7(Production):
         n1.remove(c[0])
         n2.remove(c[0])
 
-        if len(n1) != 3:
-            raise ValueError('There are not exactly 3 unique vertices')
-        if len(n2) != 3:
-            raise ValueError('There are not exactly 3 unique vertices')
-
         n1_pos = [graph.nodes()[n]['position'] for n in n1]
         n2_pos = [graph.nodes()[n]['position'] for n in n2]
         n1 = [n for n in n1 for pos in n2_pos if graph.nodes()[n]['position'] == pos]
@@ -132,4 +125,18 @@ class P7(Production):
             raise ValueError('There are not exactly 2 vertices with the same position')
         if len(n2) != 2:
             raise ValueError('There are not exactly 2 vertices with the same position')
+        if not are_connected(graph, n1):
+            raise ValueError('Vertices on the line not connected')
+        if not are_connected(graph, n2):
+            raise ValueError('Vertices on the line not connected')
+        a1 = [v for v in n1 if len(common_elements([x for x in graph.neighbors(v) if graph.nodes()[x]['label'] == 'I'], prod_input)) == 2]
+        a2 = [v for v in n2 if len(common_elements([x for x in graph.neighbors(v) if graph.nodes()[x]['label'] == 'I'], prod_input)) == 2]
+        if len(a1) != 1:
+            raise ValueError('Wrong interior connections for vertices on the line')
+        if len(a2) != 1:
+            raise ValueError('Wrong interior connections for vertices on the line')
+        if not are_connected(graph, [a1[0], c[0]]):
+            raise ValueError('Vertices on the line not connected')
+        if not are_connected(graph, [a2[0], c[0]]):
+            raise ValueError('Vertices on the line not connected')
         return down_layer, zip(n1, n2)

@@ -2,10 +2,9 @@ import unittest
 from random import choice
 from networkx import Graph
 from matplotlib import pyplot
-from agh_graphs.utils import gen_name
 from agh_graphs.productions.p7 import P7
 from agh_graphs.visualize import visualize_graph_3d
-from tests.test_utils import visualize_tests, addTriangle
+from test_utils import visualize_tests, addTriangle
 
 
 class P7Test(unittest.TestCase):
@@ -118,8 +117,8 @@ class P7Test(unittest.TestCase):
 def createCorrectGraph():
     graph = Graph()
     e01 = "e01"
-    e02 = "e02"
-    e03 = "e03"
+    e02 = "e02"  # not required
+    e03 = "e03"  # not required
     e04 = "e04"
     i1 = "i1"
     i2 = "i2"
@@ -128,8 +127,8 @@ def createCorrectGraph():
     I3 = "I3"
     I4 = "I4"
     e11 = "e11"
-    e12 = "e12"
-    e13 = "e13"
+    e12 = "e12"  # not required
+    e13 = "e13"  # not required
     e14 = "e14"
     e15 = "e15"
     e16 = "e16"
@@ -142,10 +141,10 @@ def createCorrectGraph():
     graph.add_node(i2, layer=0, position=(0.5, 1.5), label='i')
     graph.add_node(i1, layer=0, position=(1.5, 0.5), label='i')
 
-    graph.add_node(I1, layer=1, position=(0.5, 0.5), label='I')
-    graph.add_node(I2, layer=1, position=(0.5, 1.5), label='I')
-    graph.add_node(I3, layer=1, position=(1.5, 0.5), label='I')
-    graph.add_node(I4, layer=1, position=(1.5, 1.5), label='I')
+    graph.add_node(I1, layer=1, position=(0.25, 1), label='I')
+    graph.add_node(I2, layer=1, position=(1.4, 2), label='I')
+    graph.add_node(I3, layer=1, position=(0.75, 0), label='I')
+    graph.add_node(I4, layer=1, position=(1.6, 1), label='I')
     graph.add_node(e11, layer=1, position=(0.0, 0.0), label='E')
     graph.add_node(e12, layer=1, position=(0.0, 2.0), label='E')
     graph.add_node(e13, layer=1, position=(2.0, 0.0), label='E')
