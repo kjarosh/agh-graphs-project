@@ -2,8 +2,8 @@ import unittest
 
 from networkx import Graph
 
-from derivations.derivation_a import DerivationA
-from utils import gen_name, centroid
+from agh_graphs.derivations.derivation_a import DerivationA
+from agh_graphs.utils import gen_name, centroid
 
 
 class DerivationATest(unittest.TestCase):

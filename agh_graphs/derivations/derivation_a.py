@@ -1,11 +1,11 @@
 from matplotlib import pyplot
 from networkx import Graph
 
-from productions.p1 import P1
-from productions.p12 import P12
-from productions.p9 import P9
-from utils import gen_name
-from visualize import visualize_graph_layer, visualize_graph_3d
+from agh_graphs.productions.p1 import P1
+from agh_graphs.productions.p12 import P12
+from agh_graphs.productions.p9 import P9
+from agh_graphs.utils import gen_name
+from agh_graphs.visualize import visualize_graph_layer, visualize_graph_3d
 
 
 class DerivationA:
