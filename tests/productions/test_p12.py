@@ -22,6 +22,7 @@ class P12Test(unittest.TestCase):
         e2_1 = gen_name()
         e2_2 = gen_name()
         e2_4 = gen_name()
+        e3_5 = gen_name()
 
         graph.add_node(e1, layer=1, position=(1.0, 1.0), label='E')
         graph.add_node(e2, layer=1, position=(2.0, 2.0), label='E')
@@ -33,6 +34,7 @@ class P12Test(unittest.TestCase):
         graph.add_node(e2_1, layer=2, position=(1.0, 1.0), label='E')
         graph.add_node(e2_2, layer=2, position=(2.0, 2.0), label='E')
         graph.add_node(e2_4, layer=2, position=(2.0, 1.0), label='E')
+        graph.add_node(e3_5, layer=2, position=(2.0, 3.0), label='E')
 
         graph.add_edge(e1, e2)
         graph.add_edge(e1, e3)
@@ -45,17 +47,20 @@ class P12Test(unittest.TestCase):
         graph.add_edge(e2_1, e2_2)
         graph.add_edge(e2_1, e2_4)
         graph.add_edge(e2_2, e2_4)
+        graph.add_edge(e3_5, e1_2)
+        graph.add_edge(e3_5, e1_3)
 
         i1 = add_interior(graph, e1, e2, e3)
         i2 = add_interior(graph, e1, e2, e4)
         i1_1 = add_interior(graph, e1_1, e1_2, e1_3)
         i2_1 = add_interior(graph, e2_1, e2_2, e2_4)
+        i3_1 = add_interior(graph, e3_5, e1_2, e1_3)
         graph.nodes[i1]['label'] = 'i'
         graph.nodes[i2]['label'] = 'i'
-        
 
         graph.add_edge(i1, i1_1)
         graph.add_edge(i2, i2_1)
+        graph.add_edge(i1, i3_1)
 
         if visualize_tests:
             visualize_graph_3d(graph)
@@ -64,8 +69,8 @@ class P12Test(unittest.TestCase):
         P12().apply(graph, [i1, i2, i1_1, i2_1])
 
         # if correct number of nodes and edges
-        self.assertEqual(len(graph.nodes()), 12)
-        self.assertEqual(len(graph.edges()), 24)
+        self.assertEqual(len(graph.nodes()), 14)
+        self.assertEqual(len(graph.edges()), 30)
 
         # if interiors has correct labels, layers and are connected
         self.assertEqual(graph.nodes[i1]['label'], 'i')
@@ -119,8 +124,10 @@ class P12Test(unittest.TestCase):
             i_neighbors = [x for x in node_neighbors if graph.nodes[x]['label'] == 'I']
             if len(i_neighbors) == 1:
                 self.assertEqual(len(node_neighbors), 3)
-            else:  # 2
+            elif len(i_neighbors) == 2:
                 self.assertEqual(len(node_neighbors), 5)
+            else:
+                self.assertEqual(len(node_neighbors), 7)
 
         if visualize_tests:
             visualize_graph_3d(graph)
