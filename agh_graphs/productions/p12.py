@@ -78,10 +78,6 @@ class P12(Production):
             if lower_interior not in neighbors_in_lower_layer[prod_input[0]]\
               and lower_interior not in neighbors_in_lower_layer[prod_input[1]]:
                 raise ValueError('Upper interiors not connected to lower ones')
-        if len(neighbors_in_lower_layer[prod_input[0]]) != 1:
-            raise ValueError('Upper interiors connected to too many lower ones')
-        if len(neighbors_in_lower_layer[prod_input[1]]) != 1:
-            raise ValueError('Upper interiors connected to too many lower ones')
 
         # maps lower interiors to its parent in upper layer
         lower_to_upper = dict()
