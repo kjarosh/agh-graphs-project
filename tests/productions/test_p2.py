@@ -6,7 +6,7 @@ from math import isclose
 
 from agh_graphs.productions.p1 import P1
 from agh_graphs.productions.p2 import P2
-from agh_graphs.utils import gen_name, add_interior, get_neighbors_at
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, get_node_at
 from agh_graphs.visualize import visualize_graph_3d
 from tests.utils import visualize_tests
 
@@ -19,9 +19,9 @@ class P2Test(unittest.TestCase):
         e1 = gen_name()
         e2 = gen_name()
         e3 = gen_name()
-        graph.add_node(e1, layer=1, position=(1.0, 2.0), label='E')
-        graph.add_node(e2, layer=1, position=(1.0, 1.0), label='E')
-        graph.add_node(e3, layer=1, position=(2.0, 1.0), label='E')
+        graph.add_node(e1, layer=0, position=(1.0, 2.0), label='E')
+        graph.add_node(e2, layer=0, position=(1.0, 1.0), label='E')
+        graph.add_node(e3, layer=0, position=(2.0, 1.0), label='E')
 
         graph.add_edge(e1, e2)
         graph.add_edge(e1, e3)
@@ -34,6 +34,11 @@ class P2Test(unittest.TestCase):
             pyplot.show()
 
         [i1, i2] = P2().apply(graph, [i])
+
+        self.assertIsNotNone(get_node_at(graph, 1, (1.0, 2.0)))
+        self.assertIsNotNone(get_node_at(graph, 1, (1.0, 1.0)))
+        self.assertIsNotNone(get_node_at(graph, 1, (2.0, 1.0)))
+        self.assertIsNotNone(get_node_at(graph, 1, (1.5, 1.0)))
 
         (i1_x, i1_y) = graph.nodes[i1]['position']
         (i2_x, i2_y) = graph.nodes[i2]['position']
@@ -190,8 +195,9 @@ class P2Test(unittest.TestCase):
         [i2_1, i2_2] = P2().apply(graph, [i2])
         [i3_1, i3_2] = P2().apply(graph, [i1_1])
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
         [i4_1, i4_2] = P2().apply(graph, [i1_2])
 
@@ -206,8 +212,9 @@ class P2Test(unittest.TestCase):
         self.check_graph_integrity(graph, i4_1, 'I')
         self.check_graph_integrity(graph, i4_2, 'I')
 
-        visualize_graph_3d(graph)
-        pyplot.show()
+        if visualize_tests:
+            visualize_graph_3d(graph)
+            pyplot.show()
 
     def check_graph_integrity(self, graph, i_node_id, expected_label):
         i_node_data = graph.nodes[i_node_id]
