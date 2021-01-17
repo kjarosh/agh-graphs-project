@@ -86,11 +86,18 @@ class P7(Production):
             if len(common_neighbors) > 2:
                 raise ValueError('Interiors have more than 2 common neighbors')
 
+            return common_neighbors
+
         # Check correctness of upper layer
-        check_structure(up_layer_nodes, up_layer)
+        up_e = check_structure(up_layer_nodes, up_layer)
         # Check correctness of lower layer
         check_structure(interior_neighbours0, down_layer)
         check_structure(interior_neighbours1, down_layer)
+
+        if len(up_e) != 2:
+            raise ValueError('Upper kayer interiors have less than 2 common neighbors')
+        if not are_connected(graph, up_e):
+            raise ValueError('E vertices in upper layer not connected')
 
         # check nodes with the same position
         n1 = sorted(set(
