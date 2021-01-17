@@ -25,15 +25,10 @@ class P7(Production):
     def apply(self, graph: Graph, prod_input: List[str], orientation: int = 0, **kwargs) -> List[str]:
         layer, to_merge = self.__check_prod_input(graph, prod_input)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
         for v1, v2 in to_merge:
             join_overlapping_vertices(graph, v1, v2, layer)
 
-        visualize_graph_3d(graph)
-        pyplot.show()
-
-        return prod_input
+        return []
 
 
     @staticmethod
