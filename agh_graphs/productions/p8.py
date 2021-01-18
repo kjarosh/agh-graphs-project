@@ -2,7 +2,7 @@ from typing import List
 
 from networkx import Graph
 from agh_graphs.production import Production
-from agh_graphs.utils import get_neighbors_at, find_overlapping_vertices, join_overlapping_vertices, get_all_E_vertices_from_layer, get_node_at
+from agh_graphs.utils import get_neighbors_at, find_overlapping_vertices, join_overlapping_vertices, get_vertices_from_layer, get_node_at
 
 
 class P8(Production):
@@ -40,7 +40,7 @@ class P8(Production):
 
         for interior in prod_input:
             interior_neighbours = get_neighbors_at(graph, interior, layer)
-            if 2 > len(interior_neighbours) > 3:
+            if len(interior_neighbours) not in [2, 3]:
                 raise ValueError('wrongly connected interior vertices')
 
             for neighbour in interior_neighbours:
@@ -49,7 +49,7 @@ class P8(Production):
 
                 all_I_neighbours.append(neighbour)
 
-        E_vertices = get_all_E_vertices_from_layer(graph, layer)
+        E_vertices = get_vertices_from_layer(graph, layer, 'E')
         E_vertices_position_prev_layer = []
         if any(E_vertice not in all_I_neighbours for E_vertice in E_vertices):
             raise ValueError('wrongly connected E vertices')
@@ -58,8 +58,9 @@ class P8(Production):
             if len([I_node for I_node in E_vertice_neighbours if graph.nodes()[I_node]['label'] == "I"]) != 2:
                 raise ValueError('each E vertice must be connected with two I vertices')
             E_vertice_E_neighbours = [neighbour for neighbour in E_vertice_neighbours if graph.nodes()[neighbour]['label'] == "E"]
-            if 2 > len(E_vertice_E_neighbours) > 4:
-                raise ValueError('each E vertice must be connected with at least two E vertices')
+            if len(E_vertice_E_neighbours) not in [1, 2, 3, 4]:
+                print(len(E_vertice_E_neighbours))
+                raise ValueError('each E vertice must be connected with at least one E vertice')
             corresponding_vertice = get_node_at(graph, layer-1, graph.nodes()[E_vertice]['position'])
             if corresponding_vertice is not None:
                 E_vertices_position_prev_layer.append(corresponding_vertice)

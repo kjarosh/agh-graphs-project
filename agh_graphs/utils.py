@@ -304,13 +304,17 @@ def is_close(pos1, pos2):
     return math.isclose(x1, x2) and math.isclose(y1, y2)
 
 
-def get_all_E_vertices_from_layer(graph, layer):
+def get_vertices_from_layer(graph: Graph, layer: int, label: str=None):
     """
-    Returns list of all E vertices from given layer.
+    Returns list of all vertices from given layer with given label.
+    If label is None returns all vertices from given layer.
     """
     layer_E_nodes = []
     for node in graph.nodes():
-        if graph.nodes()[node]['layer'] == layer and graph.nodes()[node]['label'] == "E":
-            layer_E_nodes.append(node)
-
+        if graph.nodes()[node]['layer'] == layer:
+            if label is None:
+                layer_E_nodes.append(node)
+            else:
+                if graph.nodes()[node]['label'] == label:
+                    layer_E_nodes.append(node)
     return layer_E_nodes

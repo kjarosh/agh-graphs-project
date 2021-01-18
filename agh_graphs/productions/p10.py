@@ -4,7 +4,7 @@ from networkx import Graph
 
 from agh_graphs.production import Production
 from agh_graphs.utils import find_overlapping_vertices, get_neighbors_at, \
-    get_all_E_vertices_from_layer, get_node_at, join_overlapping_vertices
+    get_vertices_from_layer, get_node_at, join_overlapping_vertices
 
 
 class P10(Production):
@@ -75,7 +75,7 @@ class P10(Production):
 
         for interior in prod_input:
             interior_neighbours = get_neighbors_at(graph, interior, layer)
-            if 2 > len(interior_neighbours) > 3:
+            if len(interior_neighbours) not in [2, 3]:
                 raise ValueError('wrongly connected interior vertices')
 
             for neighbour in interior_neighbours:
@@ -84,17 +84,17 @@ class P10(Production):
 
                 all_I_neighbours.append(neighbour)
 
-        E_vertices = get_all_E_vertices_from_layer(graph, layer)
+        E_vertices = get_vertices_from_layer(graph, layer, "E")
         E_vertices_position_prev_layer = []
         if any(E_vertice not in all_I_neighbours for E_vertice in E_vertices):
             raise ValueError('wrongly connected E vertices')
         for E_vertice in E_vertices:
             E_vertice_neighbours = get_neighbors_at(graph, E_vertice, layer)
-            if 1 > len([I_node for I_node in E_vertice_neighbours if graph.nodes()[I_node]['label'] == "I"]) > 2:
+            if len([I_node for I_node in E_vertice_neighbours if graph.nodes()[I_node]['label'] == "I"]) not in [1, 2]:
                 raise ValueError('each E vertice must be connected with I vertice')
             E_vertice_E_neighbours = [neighbour for neighbour in E_vertice_neighbours if
                                       graph.nodes()[neighbour]['label'] == "E"]
-            if 1 > len(E_vertice_E_neighbours) > 2:
+            if len(E_vertice_E_neighbours) not in [1, 2, 3]:
                 raise ValueError('each E vertice must be connected with at least one E vertice')
             corresponding_vertice = get_node_at(graph, layer - 1, graph.nodes()[E_vertice]['position'])
             if corresponding_vertice is not None:
@@ -185,7 +185,7 @@ class P10(Production):
 
         if common_I_neighbour_vertices_to_join[1] not in common_vertice1_neighbours:
             raise ValueError('vertices to join with common I neighbour are not connected')
-        if 1 > len(set(common_vertice1_neighbours).intersection(set(common_vertice2_neighbours))) > 2:
+        if len(set(common_vertice1_neighbours).intersection(set(common_vertice2_neighbours))) not in [1, 2]:
             raise ValueError('vertices to join with common I neighbour are wrongly connected')
 
         noncommon_vertice1_neighbours = get_neighbors_at(graph, noncommon_I_neighbour_vertices_to_join[0], layer)
@@ -193,5 +193,5 @@ class P10(Production):
 
         if noncommon_I_neighbour_vertices_to_join[1] in noncommon_vertice1_neighbours:
             raise ValueError('vertices to join with non-common I neighbour are connected')
-        if 1 > len(set(noncommon_vertice1_neighbours).intersection(set(noncommon_vertice2_neighbours))) > 2:
+        if len(set(noncommon_vertice1_neighbours).intersection(set(noncommon_vertice2_neighbours))) not in [1, 2]:
             raise ValueError('vertices to join with common I neighbour are wrongly connected')

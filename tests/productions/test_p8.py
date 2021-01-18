@@ -12,7 +12,7 @@ from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, find_over
 from agh_graphs.visualize import visualize_graph_3d, visualize_graph_layer
 
 
-class P2Test(unittest.TestCase):
+class P8Test(unittest.TestCase):
 
     def testHappyPath(self):
         graph = createCorrectGraph()
