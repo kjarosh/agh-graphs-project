@@ -123,10 +123,6 @@ class P7Test(unittest.TestCase):
             with self.assertRaises(ValueError):
                 P7().apply(graph, prod_input)
 
-
-
-
-
 def required_nodes():
     return [
         'e01', # Doesn't care if this node exist or not
