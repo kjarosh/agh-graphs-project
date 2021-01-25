@@ -22,11 +22,11 @@ def centroid(a, b, c):
 
 def angle_with_x_axis(a: (int, int), b: (int, int)) -> float:
     """
-    Returns angle (0-360) between segment and positive X-axis
+    Returns angle (0-180) between segment and positive X-axis
     """
     x = b[0] - a[0]
     y = b[1] - a[1]
-    return math.degrees(math.atan2(y, x)) % 360
+    return math.degrees(math.atan2(y, x)) % 180
 
 
 def add_interior(graph: Graph, a_name, b_name, c_name):
@@ -53,22 +53,6 @@ def add_interior(graph: Graph, a_name, b_name, c_name):
     graph.add_edge(i_name, c_name)
 
     return i_name
-
-
-def add_break(graph: Graph, segment_ids: [(str, str)]) -> str:
-    """
-    You probably don't want to use this method anymore. Use add_break_in_segment instead.
-
-    Adds a node that breaks proper segment.
-    Proper segment is a segment with the smallest angle with positive x-axis.
-
-    `segment_ids` - list of tuples. Each tuple consists of two vertexes ids that represents a segment. This means
-    that there has to be an edge between these vertexes.
-
-    Returns id of newly created vertex.
-    """
-    segment_to_break = get_segment_with_smallest_angle(graph, segment_ids)
-    return add_break_in_segment(graph, segment_to_break)
 
 
 def add_break_in_segment(graph: Graph, segment: (str, str)) -> str:
@@ -108,6 +92,16 @@ def get_node_at(graph, layer, pos):
     return nodes[0]
 
 
+def sort_vertices_by_coordinates(graph: Graph, vertices: [str]):
+    """
+    Returns list of vertices sorted by x coordinate and then y coordinate.
+    """
+    def key(item):
+        return graph.nodes()[item]['position']
+
+    return sorted(vertices, key=key)
+
+
 def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool = False):
     """
     Returns list of segment ids sorted by angle with positive x-axis.
@@ -127,23 +121,6 @@ def sort_segments_by_angle(graph: Graph, segment_ids: [(str, str)], desc: bool =
     if desc:
         sorted_segment_ids.reverse()
     return sorted_segment_ids
-
-
-def get_segment_with_smallest_angle(graph, segment_ids):
-    segments = []
-    for segment in segment_ids:
-        pos1 = graph.nodes[segment[0]]['position']
-        pos2 = graph.nodes[segment[1]]['position']
-        segments.append((pos1, pos2))
-
-    min_angle = angle_with_x_axis(segments[0][0], segments[0][1])
-    min_segment_idx = 0
-    for i in range(0, len(segments)):
-        angle = angle_with_x_axis(segments[i][0], segments[i][1])
-        if angle < min_angle:
-            min_angle = angle
-            min_segment_idx = i
-    return segment_ids[min_segment_idx]
 
 
 def get_neighbors_at(graph: Graph, vertex, layer):
@@ -251,36 +228,34 @@ def find_overlapping_vertices(graph: Graph):
             for node_b_id, node_b_data in bucket:
                 if node_a_id == node_b_id:
                     continue
-                (a_x, a_y) = node_a_data['position']
-                (b_x, b_y) = node_b_data['position']
-                if math.isclose(a_x, b_x) and math.isclose(a_y, b_y):
+                pos_a = node_a_data['position']
+                pos_b = node_b_data['position']
+                if is_close(pos_a, pos_b):
                     overlapping.append((node_a_id, node_b_id))
     return overlapping
 
 
 def join_overlapping_vertices(graph: Graph, vertex1, vertex2, layer):
     """
-    Joins two vertices by moving all edges from vertex2 to vertex1 .
-    and then removes vertex2.
+    Joins two vertices by moving all edges from `vertex2` to `vertex1`,
+    then it removes `vertex2`.
 
     'vertex1', 'vertex2' - vertices to join, should be overlapping
 
     Returns vertex1 if joined.
-    Returns None if vertices are not overlapped.
+    Returns None if vertices are not overlapping.
     """
 
-    vertex1_x, vertex1_y = graph.nodes()[vertex1]['position']
-    vertex2_x, vertex2_y = graph.nodes()[vertex2]['position']
+    v1_pos = graph.nodes()[vertex1]['position']
+    v2_pos = graph.nodes()[vertex2]['position']
 
-    if math.isclose(vertex1_x, vertex2_x) \
-            and math.isclose(vertex1_y, vertex2_y):
+    if is_close(v1_pos, v2_pos):
+        vertex1_neighbors = get_neighbors_at(graph, vertex1, layer)
+        vertex2_neighbors = get_neighbors_at(graph, vertex2, layer)
 
-        vertex1_neighbours = get_neighbors_at(graph, vertex1, layer)
-        vertex2_neighbours = get_neighbors_at(graph, vertex2, layer)
-
-        for vertex2_neighbour in vertex2_neighbours:
-            if vertex2_neighbour not in vertex1_neighbours:
-                graph.add_edge(vertex1, vertex2_neighbour)
+        for vertex2_neighbor in vertex2_neighbors:
+            if vertex2_neighbor not in vertex1_neighbors:
+                graph.add_edge(vertex1, vertex2_neighbor)
         graph.remove_node(vertex2)
         return vertex1
 
@@ -300,3 +275,46 @@ def get_common_neighbors(graph: Graph, v1: str, v2: str, on_layer: int = None) -
         return [v for v in common if graph.nodes[v]['layer'] == on_layer]
     else:
         return list(common)
+
+
+def get_vertex_between(graph, v1, v2, layer=None, label=None):
+    """
+    Returns the node between `v1` and `v2` on layer `layer` with
+    label `label`. Returns `None` if not found.
+
+    Parameters `layer` or `label` may be `None`, and they are not
+    taken into account when searching then.
+    """
+    (v1_x, v1_y) = graph.nodes[v1]['position']
+    (v2_x, v2_y) = graph.nodes[v2]['position']
+    desired_position = ((v1_x + v2_x) / 2, (v1_y + v2_y) / 2)
+    neighbors = [n for n in graph.neighbors(v1)
+                 if n in graph.neighbors(v2)
+                 and (layer is None or graph.nodes[n]['layer'] == layer)
+                 and (label is None or graph.nodes[n]['label'] == label)
+                 and is_close(graph.nodes[n]['position'], desired_position)]
+    if len(neighbors) != 1:
+        return None
+    return neighbors[0]
+
+
+def is_close(pos1, pos2):
+    x1, y1 = pos1
+    x2, y2 = pos2
+    return math.isclose(x1, x2) and math.isclose(y1, y2)
+
+
+def get_vertices_from_layer(graph: Graph, layer: int, label: str=None):
+    """
+    Returns list of all vertices from given layer with given label.
+    If label is None returns all vertices from given layer.
+    """
+    layer_E_nodes = []
+    for node in graph.nodes():
+        if graph.nodes()[node]['layer'] == layer:
+            if label is None:
+                layer_E_nodes.append(node)
+            else:
+                if graph.nodes()[node]['label'] == label:
+                    layer_E_nodes.append(node)
+    return layer_E_nodes

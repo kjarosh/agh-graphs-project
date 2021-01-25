@@ -3,7 +3,8 @@ from typing import List
 from networkx import Graph
 
 from agh_graphs.production import Production
-from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, sort_segments_by_angle, add_break_in_segment
+from agh_graphs.utils import gen_name, add_interior, get_neighbors_at, sort_segments_by_angle, add_break_in_segment, \
+    sort_vertices_by_coordinates
 
 
 class P2(Production):
@@ -49,7 +50,7 @@ class P2(Production):
         graph.add_edge(i1, i)
         graph.add_edge(i2, i)
 
-        return [i1, i2]
+        return sort_vertices_by_coordinates(graph, [i1, i2])
 
     @staticmethod
     def __check_prod_input(graph, prod_input):
