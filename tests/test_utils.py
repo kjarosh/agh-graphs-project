@@ -2,9 +2,7 @@ import unittest
 
 from networkx import Graph
 
-from agh_graphs.utils import gen_name, sort_segments_by_angle, angle_with_x_axis
-
-visualize_tests = 'VISUALIZE_TESTS' in os.environ and os.environ['VISUALIZE_TESTS'] == 'true'
+from agh_graphs.utils import sort_segments_by_angle, angle_with_x_axis
 
 
 class UtilsTest(unittest.TestCase):
