@@ -53,7 +53,7 @@ class P6(Production):
 
         # Check number of vertices delivered
         if len(set(prod_input)) != 6:
-            raise ValueError('Too few interiors in pord_input (6 required)')
+            raise ValueError('Too few interiors in prod_input (6 required)')
 
         # Check layers
         up_layer = graph.nodes()[prod_input[0]]['layer']

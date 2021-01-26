@@ -101,6 +101,21 @@ class P6Test(unittest.TestCase):
         self.assertEqual(len(e_nodes_2), 3)
 
 
+def addTriangle(graph: Graph, node, attr):
+    e1 = gen_name()
+    e2 = gen_name()
+    e3 = gen_name()
+    x = attr['position'][0]
+    y = attr['position'][1]
+    graph.add_node(e1, layer=attr['layer'], position=(x + 0.5, y + 0.5), label='E')
+    graph.add_node(e2, layer=attr['layer'], position=(x, y + 0.5), label='E')
+    graph.add_node(e3, layer=attr['layer'], position=(x - 0.5, y - 0.5), label='E')
+    graph.add_edge(node, e1)
+    graph.add_edge(node, e2)
+    graph.add_edge(node, e3)
+    return graph
+
+
 def createCorrectGraph():
     graph = Graph()
     e1 = gen_name()
@@ -155,19 +170,4 @@ def createCorrectGraph():
     graph.add_edge(I4, e7)
     graph.add_edge(I4, e8)
     graph.add_edge(e7, e8)
-    return graph
-
-
-def addTriangle(graph: Graph, node, attr):
-    e1 = gen_name()
-    e2 = gen_name()
-    e3 = gen_name()
-    x = attr['position'][0]
-    y = attr['position'][1]
-    graph.add_node(e1, layer=attr['layer'], position=(x + 0.5, y + 0.5), label='E')
-    graph.add_node(e2, layer=attr['layer'], position=(x, y + 0.5), label='E')
-    graph.add_node(e3, layer=attr['layer'], position=(x - 0.5, y - 0.5), label='E')
-    graph.add_edge(node, e1)
-    graph.add_edge(node, e2)
-    graph.add_edge(node, e3)
     return graph
